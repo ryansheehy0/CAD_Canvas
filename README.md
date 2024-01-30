@@ -1,4 +1,4 @@
-# CAD Canvus
+# CAD Canvas
 
 A 2d CAD software for note taking, making diagrams/logos, and designing with percussion.
 
