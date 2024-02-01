@@ -1,30 +1,71 @@
 import Solid, { createSignal, onMount } from 'solid-js'
 
-type CanvasProps = {
-
+type Line = {
+	startX: number
+	startY: number
+	endX: number
+	endY: number
 }
 
-const Canvas: Solid.Component<CanvasProps> = (props) => {
-	const [isLine, setIsLine] = createSignal(false)
-	let canvasRef
-	let canvasContext
+const Canvas: Solid.Component = (props) => {
+	const [isDrawing, setIsDrawing] = createSignal(false)
+	let canvasRef: HTMLCanvasElement
+	let canvasContext: CanvasRenderingContext2D
+	let startX: number
+	let startY: number
+	let endX: number
+	let endY: number
+	let lines: Line[] = []
+
+	function drawLines(lines: Line[]){
+		for(const line of lines){
+			canvasContext.beginPath()
+			canvasContext.moveTo(line.startX, line.startY)
+			canvasContext.lineTo(line.endX, line.endY)
+			canvasContext.stroke()
+		}
+	}
 
 	onMount(() => {
-		canvasContext = canvasRef.current.getContext('2d')
+		const context = canvasRef.getContext('2d')
+		if(context) canvasContext = context
+		canvasContext.lineCap = "round"
+		canvasContext.strokeStyle = "black"
+		canvasContext.lineWidth = 5
+
+		canvasRef.width = window.innerWidth
+		canvasRef.height = window.innerHeight
 	})
 
-	function clicked(event){
+	function mouseDown(event: MouseEvent){
 		const {offsetX, offsetY} = event
-		canvasContext.
+		if(isDrawing()){
+			lines.push({startX, startY, endX, endY})
+			setIsDrawing(false)
+		}else{
+			startX = offsetX
+			startY = offsetY
+			setIsDrawing(true)
+		}
 	}
 
 	function move(event: MouseEvent){
-		const {offsetX, offsetY} = event
-
+		if(!isDrawing()) return
+		canvasContext.clearRect(0, 0, canvasRef.width, canvasRef.height)
+		drawLines(lines)
+		canvasContext.beginPath()
+		canvasContext.moveTo(startX, startY)
+		endX = event.offsetX
+		endY = event.offsetY
+		canvasContext.lineTo(event.offsetX, event.offsetY)
+		canvasContext.stroke()
 	}
 
 	return (
-		<canvas ref={canvasRef} className="w-screen h-screen bg-red-500" onClick={clicked} onMouseMove={move}>
+		<canvas ref={canvasRef!} class="w-screen h-screen bg-white overflow-hidden"
+			onMouseDown={mouseDown}
+			onMouseMove={move}
+		>
 		</canvas>
 	)
 }

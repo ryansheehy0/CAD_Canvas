@@ -12,43 +12,46 @@ Combine the precision drawing of 2d cad programs like Fusion 360's sketching, wi
 ### Drawing tools
 - Line
 - Rectangle
-	- Rounded rectangle
+- Rounded rectangle
 - Polygon
 - Circle
-	- Circular arch
-	- Slot
+- Circular arch
+- Slot
 - Ellipse
-	- Elliptical arch
+- Elliptical arch
 - Text
 - Point
 - Freehand
-- Splines
-	- Catmull-Rom spline
-	- Natural cubic spline
-	- B-spline
+- Catmull-Rom spline
+- Natural cubic spline
+- B-spline
 
 ### Settings for all tools
 - Construction or not
 - Line width
 - Line styling
 - Line color
-- Rounded edges
+- Rounded ends
 
 ### Constraints
 - Angle
-	- 90, 45
-- X-axis
-- Y-axis
-- Tangent
-- Lock(Don't allow it to be dragged around)
-- Dimension
-	- X-axis dimension
-	- y-axis dimension
+	- Parallel
+	- Perpendicular
+- X-axis/Horizontal
+- Y-axis/Vertical
 - Point to line
 - Point to point
-- Parallel
-- Dimensional equality
-- Radius/Diameter
+- Tangent
+- Equality
+- Dimension
+	- X-axis/horizontal dimension
+	- y-axis/vertical dimension
+	- Radius/Diameter
+- Lock(Don't allow it to be dragged around)
+- Concentric(Align center of circles)
+- Colinear(Makes 2 lines parallel and int he same position)
+- Symmetric(Makes 2 objects symmetric across a line)
+- Curvature(G2 curvature)
 
 ### Operations
 - Close loop nicely
@@ -77,6 +80,7 @@ Components are pages you can save and then be able to use in other pages. Like r
 
 ### File
 - Export
+	- svg, pdf, png, jpeg
 - Save(Custom file type)
 - Open
 - Import image
@@ -86,13 +90,19 @@ Components are pages you can save and then be able to use in other pages. Like r
 	- Whenever there is a change
 - Background color
 - Page dimensions
-	- Work done on infinite grid, but can click to page outline.
+	- Work done on canvas dimensions, but can click to page outline.
+	- Used for exporting
+- Canvas dimensions
+	- Not infinite, but very large
 - Default settings for tools
 	- Default line width
 	- Default line styling
 	- Default line color
 	- Default units
 	- Default lines per round segment
+- Dark and light theme
+
+### Keyboard shortcuts
 
 ## Minimum Viable Product 1
 1. Draw line
