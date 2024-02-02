@@ -9,6 +9,10 @@ type GlobalContext = {
   setSelectedCommand: Solid.Setter<SelectedCommand>
   selectedTool: Solid.Accessor<SelectedTool>
   setSelectedTool: Solid.Setter<SelectedTool>
+  mouseDown: Solid.Accessor<(event: MouseEvent) => void>
+  setMouseDown: Solid.Setter<(event: MouseEvent) => void>
+  mouseMove: Solid.Accessor<(event: MouseEvent, canvasContext: CanvasRenderingContext2D) => void>
+  setMouseMove: Solid.Setter<(event: MouseEvent, canvasContext: CanvasRenderingContext2D) => void>
 }
 
 const globalContext = createContext<GlobalContext>()
@@ -22,9 +26,11 @@ export function useGlobalContext() {
 function App() {
   const [selectedCommand, setSelectedCommand] = createSignal<SelectedCommand>("none")
   const [selectedTool, setSelectedTool] = createSignal<SelectedTool>("none")
+  const [mouseDown, setMouseDown] = createSignal<(event: MouseEvent) => void>(() => {})
+  const [mouseMove, setMouseMove] = createSignal<(event: MouseEvent, canvasContext: CanvasRenderingContext2D) => void>(() => {})
 
   return (
-    <globalContext.Provider value={{selectedCommand, setSelectedCommand, selectedTool, setSelectedTool}}>
+    <globalContext.Provider value={{selectedCommand, setSelectedCommand, selectedTool, setSelectedTool, mouseDown, setMouseDown, mouseMove, setMouseMove}}>
       <SideBar/>
       <Canvas/>
     </globalContext.Provider>

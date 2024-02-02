@@ -1,6 +1,6 @@
 # CAD Canvas
 
-A 2d CAD software for note taking, making diagrams/logos, and designing with percussion.
+A 2d CAD software for note taking, creating diagrams, and making logos.
 
 Combine the precision drawing of 2d cad programs like Fusion 360's sketching, with note taking and coloring capabilities like Notability.
 
@@ -8,6 +8,9 @@ Combine the precision drawing of 2d cad programs like Fusion 360's sketching, wi
 - Timeline of events that can be undone.
 - Tabs for different pages
 - Close without saving warning
+- Change color of lines when fully defined
+	- Have a color view and a designing view
+- When you have 2 lines on top of each other you can right click and select which line you want
 
 ### Drawing tools
 - Line
@@ -72,6 +75,9 @@ Combine the precision drawing of 2d cad programs like Fusion 360's sketching, wi
 	- Scale
 	- Mirror
 - Click to background grid or not
+- Color view or design view
+	- Design view allows you to see constrains, construction lines, whether lines have any degrees of freedom, and defined dimensions.
+	- Color view allows you to just see the line colors and filled in areas.
 
 ### Components
 Components are pages you can save and then be able to use in other pages. Like reusable parts.

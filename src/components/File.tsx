@@ -2,7 +2,7 @@ import Solid from 'solid-js'
 
 const File: Solid.Component = () => {
 	return (
-		<div class=''></div>
+		<button class='w-1/2 border-0 border-r border-black hover:border-black focus:outline-none bg-white text-black p-0 m-0 rounded-none'>File</button>
 	)
 }
 
