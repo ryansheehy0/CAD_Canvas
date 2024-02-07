@@ -4,6 +4,8 @@ A 2d CAD software for note taking, creating diagrams, and making logos.
 
 Combine the precision drawing of 2d cad programs like Fusion 360's sketching, with note taking and coloring capabilities like Notability.
 
+An SVG editor in the style of 2d CAD.
+
 ## Final Product
 - Timeline of events that can be undone.
 - Tabs for different pages
@@ -11,6 +13,7 @@ Combine the precision drawing of 2d cad programs like Fusion 360's sketching, wi
 - Change color of lines when fully defined
 	- Have a color view and a designing view
 - When you have 2 lines on top of each other you can right click and select which line you want
+- You can never have 2 or more points in the same position. They will be automatically joined.
 
 ### Drawing tools
 - Line

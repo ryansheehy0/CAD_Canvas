@@ -5,7 +5,7 @@ import Constraints from './Constraints'
 
 const SideBar: Solid.Component = () => {
 	return (
-		<div class='absolute top-0 left-0 w-56 h-screen border-r border-black'>
+		<div class='absolute top-0 left-0 w-56 h-screen border-r border-black bg-white'>
 			<File />
 			<hr class='h-px bg-black border-none'></hr>
 			<Tools/>

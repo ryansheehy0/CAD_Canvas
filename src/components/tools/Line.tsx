@@ -12,7 +12,7 @@ type Line = {
 
 const Line: Solid.Component = () => {
 	const [isSelected, setIsSelected] = createSignal(false)
-	const {setMouseDown, setMouseMove} = useGlobalContext()
+	const {setSVGElements, setMouseDown, setMouseMove} = useGlobalContext()
 
 	let isDrawing = false
 
@@ -20,17 +20,6 @@ const Line: Solid.Component = () => {
 	let startY: number
 	let endX: number
 	let endY: number
-
-	let lines: Line[] = []
-
-	function drawLines(lines: Line[], canvasContext: CanvasRenderingContext2D){
-		for(const line of lines){
-			canvasContext.beginPath()
-			canvasContext.moveTo(line.startX, line.startY)
-			canvasContext.lineTo(line.endX, line.endY)
-			canvasContext.stroke()
-		}
-	}
 
 	const lineMouseDown = (event: MouseEvent) => {
 		const {offsetX, offsetY} = event
@@ -43,7 +32,6 @@ const Line: Solid.Component = () => {
 			isDrawing = true
 		}
 	}
-	setMouseDown(() => lineMouseDown)
 
 
 	const lineMouseMove = (event: MouseEvent, canvasContext: CanvasRenderingContext2D) => {
@@ -57,11 +45,22 @@ const Line: Solid.Component = () => {
 		canvasContext.lineTo(event.offsetX, event.offsetY)
 		canvasContext.stroke()
 	}
-	setMouseMove(() => lineMouseMove)
+
+	function lineClicked(){
+		if(isSelected()){
+			setIsSelected(false)
+			setMouseDown(lineMouseDown())
+			setMouseMove()
+		}else{
+			setIsSelected(true)
+			setMouseDown(null)
+			setMouseMove(null)
+		}
+	}
 
 	return (
 		<button
-			onClick={() => setIsSelected((prevIsSelected) => !prevIsSelected)}
+			onClick={() => }
 			class={twMerge(
 				'bg-white border border-black text-black rounded-none w-8 h-8 p-0 m-0 text-base hover:border-black focus:outline-none',
 				isSelected() ? "border-2" : "border",
