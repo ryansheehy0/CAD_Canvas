@@ -3,64 +3,56 @@ import { useGlobalContext } from '../../App'
 import line from "../../assets/tools/line.svg"
 import { twMerge } from 'tailwind-merge'
 
-type Line = {
-	startX: number
-	startY: number
-	endX: number
-	endY: number
-}
-
 const Line: Solid.Component = () => {
 	const [isSelected, setIsSelected] = createSignal(false)
-	const {setSVGElements, setMouseDown, setMouseMove} = useGlobalContext()
+	const {svgElements, setSVGElements, setMouseDown, setMouseMove} = useGlobalContext()
 
 	let isDrawing = false
+	let lineIndex = 0
 
-	let startX: number
-	let startY: number
-	let endX: number
-	let endY: number
-
-	const lineMouseDown = (event: MouseEvent) => {
+	const lineMouseDown = (event: MouseEvent): void => {
+		console.log("mouse down")
 		const {offsetX, offsetY} = event
 		if(isDrawing){
-			lines.push({startX, startY, endX, endY})
 			isDrawing = false
 		}else{
-			startX = offsetX
-			startY = offsetY
+			lineIndex = svgElements().length
+			setSVGElements((svgElements) => [
+				...svgElements,
+				<line x1={offsetX} y1={offsetY} x2={offsetX} y2={offsetY} fill='black' stroke='1'/> as SVGLineElement
+			])
 			isDrawing = true
 		}
 	}
 
-
-	const lineMouseMove = (event: MouseEvent, canvasContext: CanvasRenderingContext2D) => {
+	const lineMouseMove = (event: MouseEvent): void => {
+		console.log("mouse move")
 		if(!isDrawing) return
-		canvasContext.clearRect(0, 0, canvasContext.canvas.width, canvasContext.canvas.height)
-		drawLines(lines, canvasContext)
-		canvasContext.beginPath()
-		canvasContext.moveTo(startX, startY)
-		endX = event.offsetX
-		endY = event.offsetY
-		canvasContext.lineTo(event.offsetX, event.offsetY)
-		canvasContext.stroke()
+		const {offsetX, offsetY} = event
+		setSVGElements((svgElements) => {
+			let x1 = svgElements[lineIndex].x1.baseVal.value
+			let y1 = svgElements[lineIndex].y1.baseVal.value
+			svgElements[lineIndex] = <line x1={x1} y1={y1} x2={offsetX} y2={offsetY} stroke='gray' stroke-width={1} /> as SVGLineElement
+			return [...svgElements]
+		})
 	}
 
 	function lineClicked(){
+		console.log("clicked")
 		if(isSelected()){
 			setIsSelected(false)
-			setMouseDown(lineMouseDown())
-			setMouseMove()
+			setMouseDown(() => lineMouseDown)
+			setMouseMove(() => lineMouseMove)
 		}else{
 			setIsSelected(true)
-			setMouseDown(null)
-			setMouseMove(null)
+			setMouseDown(undefined)
+			setMouseMove(undefined)
 		}
 	}
 
 	return (
 		<button
-			onClick={() => }
+			onClick={lineClicked}
 			class={twMerge(
 				'bg-white border border-black text-black rounded-none w-8 h-8 p-0 m-0 text-base hover:border-black focus:outline-none',
 				isSelected() ? "border-2" : "border",
@@ -71,7 +63,3 @@ const Line: Solid.Component = () => {
 }
 
 export default Line
-
-
-
-

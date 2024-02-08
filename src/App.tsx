@@ -1,5 +1,5 @@
 import SideBar from "./components/SideBar"
-import Solid, { createContext, createSignal, useContext } from "solid-js"
+import Solid, { createContext, createEffect, createSignal, useContext } from "solid-js"
 
 /*
 type SelectedCommand = "none" | "tools" | "constraints" | "operations" | "components"
@@ -12,16 +12,13 @@ type GlobalContext = {
 }
 */
 type SVGElements = SVGLineElement
-type 
 
 type GlobalContext = {
   svgElements: Solid.Accessor<SVGLineElement[]>
   setSVGElements: Solid.Setter<SVGLineElement[]>
-  setMouseDown: Solid.Setter<(event: MouseEvent) => void>
-  setMouseMove: Solid.Setter<(event: MouseEvent) => void>
+  setMouseDown: Solid.Setter<((event: MouseEvent) => void) | undefined>
+  setMouseMove: Solid.Setter<((event: MouseEvent) => void) | undefined>
 }
-
-
 
 const globalContext = createContext<GlobalContext>()
 
@@ -36,8 +33,9 @@ function App() {
   const [selectedCommand, setSelectedCommand] = createSignal<SelectedCommand>("none")
   const [selectedTool, setSelectedTool] = createSignal<SelectedTool>("none")
   */
-  const [mouseDown, setMouseDown] = createSignal<(event: MouseEvent) => void>(() => {})
-  const [mouseMove, setMouseMove] = createSignal<(event: MouseEvent) => void>(() => {})
+  const [mouseDown, setMouseDown] = createSignal<((event: MouseEvent) => void) | undefined>(() => {})
+  const [mouseMove, setMouseMove] = createSignal<((event: MouseEvent) => void) | undefined>(() => {})
+  const [selectedSVGElements, setSelectedSVGElements] = createSignal<SVGElements[]>([])
   const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
 
   return (

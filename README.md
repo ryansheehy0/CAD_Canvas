@@ -49,13 +49,13 @@ An SVG editor in the style of 2d CAD.
 - Point to point
 - Tangent
 - Equality
-- Dimension
-	- X-axis/horizontal dimension
-	- y-axis/vertical dimension
+- Dimension between points
+	- X-axis/horizontal dimension between points
+	- y-axis/vertical dimension between points
 	- Radius/Diameter
 - Lock(Don't allow it to be dragged around)
 - Concentric(Align center of circles)
-- Colinear(Makes 2 lines parallel and int he same position)
+- Colinear(Makes 2 lines parallel and in the same position)
 - Symmetric(Makes 2 objects symmetric across a line)
 - Curvature(G2 curvature)
 
@@ -115,5 +115,14 @@ Components are pages you can save and then be able to use in other pages. Like r
 
 ## Minimum Viable Product 1
 1. Draw line
+1. Select lines
 1. Constrain the angle between lines
 1. Constrain a line to the X and Y axes
+
+Click constrain then select 1 or 2 objects
+
+line colors
+- Fully constrained: black
+- Not constrained: gray
+- Selected: blue
+- Constructed: dashed 4 4

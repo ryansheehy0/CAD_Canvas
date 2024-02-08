@@ -5,6 +5,12 @@ import angle from '../../assets/constraints/angle.svg'
 const Angle: Solid.Component = () => {
 	const [isSelected, setIsSelected] = createSignal(false)
 
+	/*
+		- Add mouseEnter event listeners to added lines
+		- Add context signal for mouseEnter onClick function
+		- 
+	*/
+
 	return (
 		<button
 			onClick={() => setIsSelected((prevIsSelected) => !prevIsSelected)}
