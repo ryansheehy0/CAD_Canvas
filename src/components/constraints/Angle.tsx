@@ -2,13 +2,35 @@ import Solid, { createSignal } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
 
+/*
+Angle algorithm
+	1. Find distance of line you want to rotate
+		d = sqrt((xb2 - xb1)^2 + (yb2 - yb1)^2)
+	2. Find new slope of line
+		m1 = (ya1 - ya2)/(xa1 - xa2)
+		m2 = (-m1 - tan(theta))/(m1 * tan(theta) - 1)
+	3. Find new xb2 and yb2
+		xChange = d / sqrt(m2^2 + 1)
+		xb2 = xb1 - xChange
+		yb2 = yb1 - (xChange - m2)
+
+Angle command settings
+	- Line 1 selection
+		- xa1, ya1 and xa2, ya2
+	- Line 2 selection
+		- xb1, yb1 and xb2, yb2
+	- Rotation point
+		- xb1, yb1
+	- Angle
+		- theta
+*/
+
 const Angle: Solid.Component = () => {
 	const [isSelected, setIsSelected] = createSignal(false)
 
 	/*
 		- Add mouseEnter event listeners to added lines
 		- Add context signal for mouseEnter onClick function
-		- 
 	*/
 
 	return (

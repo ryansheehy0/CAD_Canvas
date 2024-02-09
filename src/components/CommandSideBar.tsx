@@ -3,7 +3,7 @@ import File from "./File"
 import Tools from "./Tools"
 import Constraints from './Constraints'
 
-const SideBar: Solid.Component = () => {
+const CommandSideBar: Solid.Component = () => {
 	return (
 		<div class='absolute top-0 left-0 w-56 h-screen border-r border-black bg-white'>
 			<File />
@@ -16,4 +16,4 @@ const SideBar: Solid.Component = () => {
 	)
 }
 
-export default SideBar
+export default CommandSideBar

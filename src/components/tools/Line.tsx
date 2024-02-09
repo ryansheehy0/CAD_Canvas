@@ -19,7 +19,7 @@ const Line: Solid.Component = () => {
 			lineIndex = svgElements().length
 			setSVGElements((svgElements) => [
 				...svgElements,
-				<line x1={offsetX} y1={offsetY} x2={offsetX} y2={offsetY} fill='black' stroke='1'/> as SVGLineElement
+				<line x1={offsetX} y1={offsetY} x2={offsetX} y2={offsetY}/> as SVGLineElement
 			])
 			isDrawing = true
 		}
@@ -32,7 +32,7 @@ const Line: Solid.Component = () => {
 		setSVGElements((svgElements) => {
 			let x1 = svgElements[lineIndex].x1.baseVal.value
 			let y1 = svgElements[lineIndex].y1.baseVal.value
-			svgElements[lineIndex] = <line x1={x1} y1={y1} x2={offsetX} y2={offsetY} stroke='gray' stroke-width={1} /> as SVGLineElement
+			svgElements[lineIndex] = <line x1={x1} y1={y1} x2={offsetX} y2={offsetY} stroke='gray' stroke-width={2} /> as SVGLineElement
 			return [...svgElements]
 		})
 	}

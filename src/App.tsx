@@ -1,4 +1,5 @@
-import SideBar from "./components/SideBar"
+import CommandSideBar from "./components/CommandSideBar"
+import UtilitySideBar from "./components/UtilitySideBar"
 import Solid, { createContext, createEffect, createSignal, useContext } from "solid-js"
 
 /*
@@ -40,13 +41,14 @@ function App() {
 
   return (
     <globalContext.Provider value={{svgElements, setSVGElements, setMouseDown, setMouseMove}}>
-      <SideBar/>
+      <CommandSideBar/>
       <svg xmlns="http://www.w3.org/2000/svg"
         onMouseDown={mouseDown()}
         onMouseMove={mouseMove()}
-        class="w-[calc(100vw-224px)] h-screen absolute top-0 right-0 bg-white">
+        class="w-[calc(100vw-448px)] h-screen absolute top-0 left-56 bg-white">
         {svgElements()}
       </svg>
+      <UtilitySideBar/>
     </globalContext.Provider>
   )
 }
