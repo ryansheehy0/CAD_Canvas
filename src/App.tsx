@@ -1,27 +1,24 @@
 import CommandSideBar from "./components/CommandSideBar"
 import UtilitySideBar from "./components/UtilitySideBar"
-import Solid, { createContext, createEffect, createSignal, useContext } from "solid-js"
+import Solid, { createContext, createSignal, useContext } from "solid-js"
 
-/*
-type SelectedCommand = "none" | "tools" | "constraints" | "operations" | "components"
-type SelectedTool = "none" | "line"
-type GlobalContext = {
-  selectedCommand: Solid.Accessor<SelectedCommand>
-  setSelectedCommand: Solid.Setter<SelectedCommand>
-  selectedTool: Solid.Accessor<SelectedTool>
-  setSelectedTool: Solid.Setter<SelectedTool>
-}
-*/
 type SVGElements = SVGLineElement
 
-type GlobalContext = {
-  svgElements: Solid.Accessor<SVGLineElement[]>
-  setSVGElements: Solid.Setter<SVGLineElement[]>
-  setMouseDown: Solid.Setter<((event: MouseEvent) => void) | undefined>
-  setMouseMove: Solid.Setter<((event: MouseEvent) => void) | undefined>
+const [selectedCommand, setSelectedCommand] = createSignal<"line" | "angle" | null>(null)
+const [mouseDown, setMouseDown] = createSignal<((event: MouseEvent) => void) | null>(null)
+const [mouseMove, setMouseMove] = createSignal<((event: MouseEvent) => void) | null>(null)
+const [selectedSVGElements, setSelectedSVGElements] = createSignal<SVGElements[]>([])
+const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
+
+const providerValues = {
+  selectedCommand, setSelectedCommand,
+  mouseDown, setMouseDown,
+  mouseMove, setMouseMove,
+  selectedSVGElements, setSelectedSVGElements,
+  svgElements, setSVGElements
 }
 
-const globalContext = createContext<GlobalContext>()
+const globalContext = createContext<typeof providerValues>()
 
 export function useGlobalContext() {
   const value = useContext(globalContext)
@@ -30,22 +27,13 @@ export function useGlobalContext() {
 }
 
 function App() {
-  /*
-  const [selectedCommand, setSelectedCommand] = createSignal<SelectedCommand>("none")
-  const [selectedTool, setSelectedTool] = createSignal<SelectedTool>("none")
-  */
-  const [mouseDown, setMouseDown] = createSignal<((event: MouseEvent) => void) | undefined>(() => {})
-  const [mouseMove, setMouseMove] = createSignal<((event: MouseEvent) => void) | undefined>(() => {})
-  const [selectedSVGElements, setSelectedSVGElements] = createSignal<SVGElements[]>([])
-  const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
-
   return (
-    <globalContext.Provider value={{svgElements, setSVGElements, setMouseDown, setMouseMove}}>
+    <globalContext.Provider value={providerValues}>
       <CommandSideBar/>
       <svg xmlns="http://www.w3.org/2000/svg"
-        onMouseDown={mouseDown()}
-        onMouseMove={mouseMove()}
-        class="w-[calc(100vw-448px)] h-screen absolute top-0 left-56 bg-white">
+        onMouseDown={mouseDown() ? mouseDown() as (event: MouseEvent) => void : undefined}
+        onMouseMove={mouseMove() ? mouseMove() as (event: MouseEvent) => void : undefined}
+        class="w-[calc(100vw-448px)] h-screen absolute top-0 left-56 bg-black">
         {svgElements()}
       </svg>
       <UtilitySideBar/>

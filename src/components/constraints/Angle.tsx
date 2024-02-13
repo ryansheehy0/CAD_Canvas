@@ -1,6 +1,7 @@
-import Solid, { createSignal } from 'solid-js'
+import Solid from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
+import { useGlobalContext } from '../../App'
 
 /*
 Angle algorithm
@@ -26,19 +27,29 @@ Angle command settings
 */
 
 const Angle: Solid.Component = () => {
-	const [isSelected, setIsSelected] = createSignal(false)
+	const {selectedCommand, setSelectedCommand, setMouseDown, setMouseMove} = useGlobalContext()
 
 	/*
 		- Add mouseEnter event listeners to added lines
 		- Add context signal for mouseEnter onClick function
 	*/
 
+	function angleClicked(){
+		if(selectedCommand() == 'angle'){
+			setSelectedCommand(null)
+		}else{
+			setSelectedCommand('angle')
+			setMouseDown(null)
+			setMouseMove(null)
+		}
+	}
+
 	return (
 		<button
-			onClick={() => setIsSelected((prevIsSelected) => !prevIsSelected)}
+			onClick={angleClicked}
 			class={twMerge(
 				'bg-white border border-black text-black rounded-none w-8 h-8 p-0 m-0 text-base hover:border-black focus:outline-none',
-				isSelected() ? "border-2" : "border",
+				selectedCommand() == 'angle' ? "border-2" : "border",
 				"flex justify-center items-center")}>
 			<img src={angle} class='w-6 h-6'/>
 		</button>

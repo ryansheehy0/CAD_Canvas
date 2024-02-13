@@ -4,7 +4,7 @@ import Line from './tools/Line'
 const Tools: Solid.Component = () => {
 
 	return (
-		<div class='w-full h-52 p-1'>
+		<div class='w-full h-52 p-1 my-1'>
 			<Line />
 		</div>
 	)

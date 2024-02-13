@@ -1,32 +1,29 @@
-import Solid, { createSignal } from 'solid-js'
+import Solid from 'solid-js'
 import { useGlobalContext } from '../../App'
 import line from "../../assets/tools/line.svg"
 import { twMerge } from 'tailwind-merge'
 
 const Line: Solid.Component = () => {
-	const [isSelected, setIsSelected] = createSignal(false)
-	const {svgElements, setSVGElements, setMouseDown, setMouseMove} = useGlobalContext()
+	const {svgElements, setSVGElements, setMouseDown, setMouseMove, selectedCommand, setSelectedCommand} = useGlobalContext()
 
 	let isDrawing = false
 	let lineIndex = 0
 
 	const lineMouseDown = (event: MouseEvent): void => {
-		console.log("mouse down")
 		const {offsetX, offsetY} = event
 		if(isDrawing){
 			isDrawing = false
-		}else{
-			lineIndex = svgElements().length
-			setSVGElements((svgElements) => [
-				...svgElements,
-				<line x1={offsetX} y1={offsetY} x2={offsetX} y2={offsetY}/> as SVGLineElement
-			])
-			isDrawing = true
+			return
 		}
+		lineIndex = svgElements().length
+		setSVGElements((svgElements) => [
+			...svgElements,
+			<line x1={offsetX} y1={offsetY} x2={offsetX} y2={offsetY}/> as SVGLineElement
+		])
+		isDrawing = true
 	}
 
 	const lineMouseMove = (event: MouseEvent): void => {
-		console.log("mouse move")
 		if(!isDrawing) return
 		const {offsetX, offsetY} = event
 		setSVGElements((svgElements) => {
@@ -38,15 +35,14 @@ const Line: Solid.Component = () => {
 	}
 
 	function lineClicked(){
-		console.log("clicked")
-		if(isSelected()){
-			setIsSelected(false)
+		if(selectedCommand() == 'line'){
+			setSelectedCommand(null)
+			setMouseDown(null)
+			setMouseMove(null)
+		}else{
+			setSelectedCommand('line')
 			setMouseDown(() => lineMouseDown)
 			setMouseMove(() => lineMouseMove)
-		}else{
-			setIsSelected(true)
-			setMouseDown(undefined)
-			setMouseMove(undefined)
 		}
 	}
 
@@ -55,7 +51,7 @@ const Line: Solid.Component = () => {
 			onClick={lineClicked}
 			class={twMerge(
 				'bg-white border border-black text-black rounded-none w-8 h-8 p-0 m-0 text-base hover:border-black focus:outline-none',
-				isSelected() ? "border-2" : "border",
+				selectedCommand() == 'line' ? "border-2" : "border",
 				"flex justify-center items-center")}>
 			<img src={line} class='w-6 h-6'/>
 		</button>
