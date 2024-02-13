@@ -26,7 +26,7 @@ export function useGlobalContext() {
   return value
 }
 
-function App() {
+const App: Solid.Component = () => {
   return (
     <globalContext.Provider value={providerValues}>
       <CommandSideBar/>
