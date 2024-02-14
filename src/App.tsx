@@ -9,13 +9,15 @@ const [mouseDown, setMouseDown] = createSignal<((event: MouseEvent) => void) | n
 const [mouseMove, setMouseMove] = createSignal<((event: MouseEvent) => void) | null>(null)
 const [selectedSVGElements, setSelectedSVGElements] = createSignal<SVGElements[]>([])
 const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
+const [commandSettings, setCommandSettings] = createSignal<HTMLFormElement | null>(null)
 
 const providerValues = {
   selectedCommand, setSelectedCommand,
   mouseDown, setMouseDown,
   mouseMove, setMouseMove,
   selectedSVGElements, setSelectedSVGElements,
-  svgElements, setSVGElements
+  svgElements, setSVGElements,
+  commandSettings, setCommandSettings
 }
 
 const globalContext = createContext<typeof providerValues>()
@@ -26,7 +28,7 @@ export function useGlobalContext() {
   return value
 }
 
-const App: Solid.Component = () => {
+function App(){
   return (
     <globalContext.Provider value={providerValues}>
       <CommandSideBar/>

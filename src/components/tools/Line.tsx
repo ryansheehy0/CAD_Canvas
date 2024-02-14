@@ -1,4 +1,4 @@
-import Solid from 'solid-js'
+import Solid, {createEffect} from 'solid-js'
 import { useGlobalContext } from '../../App'
 import line from "../../assets/tools/line.svg"
 import { twMerge } from 'tailwind-merge'
@@ -23,14 +23,29 @@ const Line: Solid.Component = () => {
 		isDrawing = true
 	}
 
+	// Change color of selected lines
+	createEffect(() => {
+		for(const svgElement of svgElements()){
+			if(selectedSVGElements().includes(svgElement)){
+				// Selected svg elements
+				svgElement.setAttribute('stroke', 'blue')
+			}else{
+				// Not selected svg elements
+				svgElement.setAttribute('stroke', 'gray')
+			}
+		}
+	})
+
 	function svgLineClicked(event: MouseEvent){
 		if(selectedCommand() === 'line') return
 		const svgLineElement: SVGLineElement = event.target as SVGLineElement
 		if(svgLineElement.getAttribute('stroke') === 'blue'){
-			svgLineElement.setAttribute('stroke', 'gray')
-			// Remove it from the selected svg elements
+			setSelectedSVGElements((selectedSVGElements) => {
+				return selectedSVGElements.filter((selectedSVGElement) => {
+					return selectedSVGElement !== event.target
+				})
+			})
 		}else{
-			svgLineElement.setAttribute('stroke', 'blue')
 			setSelectedSVGElements((selectedSVGElements) => {
 				return [
 					...selectedSVGElements,
@@ -46,7 +61,7 @@ const Line: Solid.Component = () => {
 		setSVGElements((svgElements) => {
 			let x1 = svgElements[lineIndex].x1.baseVal.value
 			let y1 = svgElements[lineIndex].y1.baseVal.value
-			svgElements[lineIndex] = <line x1={x1} y1={y1} x2={offsetX} y2={offsetY} stroke='gray' stroke-width={3} onClick={svgLineClicked}/> as SVGLineElement
+			svgElements[lineIndex] = <line x1={x1} y1={y1} x2={offsetX} y2={offsetY} stroke='gray' stroke-width={3} onClick={svgLineClicked} /> as SVGLineElement
 			return [...svgElements]
 		})
 	}
