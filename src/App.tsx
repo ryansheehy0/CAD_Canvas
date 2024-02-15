@@ -9,7 +9,10 @@ const [mouseDown, setMouseDown] = createSignal<((event: MouseEvent) => void) | n
 const [mouseMove, setMouseMove] = createSignal<((event: MouseEvent) => void) | null>(null)
 const [selectedSVGElements, setSelectedSVGElements] = createSignal<SVGElements[]>([])
 const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
-const [commandSettings, setCommandSettings] = createSignal<HTMLFormElement | null>(null)
+type CommandSettings = {
+  form: HTMLFormElement
+} & {[key: string]: any} | null
+const [commandSettings, setCommandSettings] = createSignal<CommandSettings>(null)
 
 const providerValues = {
   selectedCommand, setSelectedCommand,

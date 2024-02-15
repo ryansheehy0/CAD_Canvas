@@ -27,7 +27,7 @@ Angle command settings
 */
 
 const Angle: Solid.Component = () => {
-	const {selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, selectedSVGElements, setSelectedSVGElements, commandSettings, setCommandSettings} = useGlobalContext()
+	const {selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, selectedSVGElements, setSelectedSVGElements, commandSettings, setCommandSettings, svgElements, setSVGElements} = useGlobalContext()
 
 	// Limit the number of selected svg elements to 2 when angle is active
 	createEffect(() => {
@@ -37,13 +37,16 @@ const Angle: Solid.Component = () => {
 	})
 
 	createEffect(() => {
-		console.log("test")
 		if(selectedCommand() !== 'angle') return
-		let theta
+
+		let theta: number
 		try{
-			theta = commandSettings()!.getElementById('angle').value
+			theta = (commandSettings()?.form!.querySelector("#angle") as HTMLInputElement)?.valueAsNumber
 		}catch(e){return}
 		console.log(theta)
+
+		if(selectedSVGElements().length !== 2) return
+			console.log("updating")
 
 		const lineA = selectedSVGElements()[0]
 			const xa1 = lineA.x1.baseVal.value
@@ -63,28 +66,57 @@ const Angle: Solid.Component = () => {
 		const newXb2 = xb1 - xChange
 		const newYb2 = yb1 - (xChange - m2)
 
+		// Update svgElements instead of selectedSVGElements
+		// Find the selectedSVG element in svgElements, then change that element
+		const svgElementIndex = svgElements().findIndex((svgElement) => svgElement !== selectedSVGElements()[1])
+
+		setSVGElements((svgElements) => {
+			const onClickFunction = svgElements[svgElementIndex].onclick
+			svgElements[svgElementIndex] = <line x1={xb1} y1={yb1} x2={newXb2} y2={newYb2} stroke='gray' stroke-width={3} onClick={onClickFunction!}/> as SVGLineElement
+			return svgElements
+		})
+
+		console.log(newXb2, newYb2)
+		console.log(svgElements())
+		console.log(selectedSVGElements())
+
 		setSelectedSVGElements((selectedSVGElements) => {
-			selectedSVGElements[1] = <line x1={xb1} y1={yb1} x2={newXb2} y2={newYb2} stroke='gray' stroke-width={3} onClick={selectedSVGElements[1].onclick} /> as SVGLineElement
+			selectedSVGElements[1] = svgElements()[svgElementIndex]
 			return selectedSVGElements
 		})
+
+		// Math maybe wrong
+		// Not updating right away
+		// Isn't firing when I change the angle
+		// Selecting lines after they are changed
 	})
 
 	function angleClicked(){
 		if(selectedCommand() == 'angle'){
 			setSelectedCommand(null)
 		}else{
-			setSelectedCommand('angle')
 			setMouseDown(() => () => {})
 			setMouseMove(() => () => {})
 			//setSelectedSVGElements([])
-			setCommandSettings(() => {
-				return (
+			setCommandSettings({
+				form: (
 					<form onSubmit={(event) => {event.preventDefault()}} class='text-black w-full h-1/2'>
 						<label for='angle'>Angle: </label>
-						<input id='angle' type='number' min={0} max={360} value={72} class='bg-white border-2 border-black focus:outline-none pl-1 w-14'></input>
+						<input id='angle' type='number' min={0} max={360} value={commandSettings()?.angle}
+							onInput={(event) => {
+								setCommandSettings((commandSettings) => {
+									return {
+										form: commandSettings!.form,
+										angle: parseInt(event.target.value)
+									}
+								})
+							}}
+						class='bg-white border-2 border-black focus:outline-none pl-1 w-14'></input>
 					</form> as HTMLFormElement
-				)
+				),
+				angle: 90
 			})
+			setSelectedCommand('angle')
 		}
 	}
 
