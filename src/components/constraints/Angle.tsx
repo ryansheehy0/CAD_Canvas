@@ -2,6 +2,7 @@ import Solid, { createEffect } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
 import { useGlobalContext } from '../../App'
+import { selectElement, getSelectedElements } from '../../utilityFunctions'
 
 /*
 Angle algorithm
@@ -9,7 +10,7 @@ Angle algorithm
 		d = sqrt((xb2 - xb1)^2 + (yb2 - yb1)^2)
 	2. Find new slope of line
 		m1 = (ya1 - ya2)/(xa1 - xa2)
-		m2 = (-m1 - tan(theta))/(m1 * tan(theta) - 1)
+		m2 = tan(theta + aTan(m1))
 	3. Find new xb2 and yb2
 		xChange = d / sqrt(m2^2 + 1)
 		newXb2 = xb1 - xChange
@@ -27,32 +28,43 @@ Angle command settings
 */
 
 const Angle: Solid.Component = () => {
-	const {selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, selectedSVGElements, setSelectedSVGElements, commandSettings, setCommandSettings, svgElements, setSVGElements} = useGlobalContext()
+	const {selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, commandSettings, setCommandSettings, svgElements, setSVGElements} = useGlobalContext()
 
 	// Limit the number of selected svg elements to 2 when angle is active
+	/*
 	createEffect(() => {
 		if(selectedCommand() !== 'angle') return
 		if(selectedSVGElements().length <= 2) return
 		setSelectedSVGElements((selectedSVGElements) => selectedSVGElements.slice(0, 2))
 	})
+	*/
 
+	function tanDegrees(degree: number){
+		return Math.tan(degree * (Math.PI/180))
+	}
+	function aTanDegrees(degree: number){
+		return Math.atan(degree * (Math.PI/180))
+	}
+
+	let prevAngle = 0
 	createEffect(() => {
 		if(selectedCommand() !== 'angle') return
+		if(selectedSVGElements().length !== 2) return
 
 		let theta: number
 		try{
 			theta = (commandSettings()?.form!.querySelector("#angle") as HTMLInputElement)?.valueAsNumber
 		}catch(e){return}
-		console.log(theta)
 
-		if(selectedSVGElements().length !== 2) return
-			console.log("updating")
+		if(theta === prevAngle) return
+		prevAngle = theta
 
 		const lineA = selectedSVGElements()[0]
 			const xa1 = lineA.x1.baseVal.value
 			const ya1 = lineA.y1.baseVal.value
 			const xa2 = lineA.x2.baseVal.value
 			const ya2 = lineA.y2.baseVal.value
+			console.log(xa1, ya1, xa2, ya2)
 		const lineB = selectedSVGElements()[1]
 			const xb1 = lineB.x1.baseVal.value
 			const yb1 = lineB.y1.baseVal.value
@@ -61,33 +73,44 @@ const Angle: Solid.Component = () => {
 
 		const distance = Math.sqrt((xb2 - xb1) ** 2 + (yb2 - yb1) ** 2)
 		const m1 = (ya1 - ya2)/(xa1 - xa2)
-		const m2 = (-m1 - Math.tan(theta))/(m1 * Math.tan(theta) - 1)
-		const xChange = distance / Math.sqrt(m2 ** 2 + 1)
-		const newXb2 = xb1 - xChange
-		const newYb2 = yb1 - (xChange - m2)
+		const m2 = tanDegrees(theta + aTanDegrees(m1))
+		let xChange = distance / Math.sqrt(m2 ** 2 + 1)
 
-		// Update svgElements instead of selectedSVGElements
-		// Find the selectedSVG element in svgElements, then change that element
-		const svgElementIndex = svgElements().findIndex((svgElement) => svgElement !== selectedSVGElements()[1])
+		const asymptote1 = 90 - aTanDegrees(m1)
+		const asymptote2 = 180 + asymptote1
+
+		let newXb2: number
+		let newYb2: number
+
+		if(theta === asymptote1){
+			newXb2 = xb1
+			newYb2 = yb1 - distance
+		}else if(theta === asymptote2){
+			newXb2 = xb1
+			newYb2 = yb1 + distance
+		}else{
+			if(theta < asymptote1 || theta > asymptote2){
+				xChange *= -1
+			}
+			newXb2 = xb1 + xChange
+			newYb2 = yb1 + (xChange * m2)
+		}
+
+		console.log("Selected SVG Elements", selectedSVGElements())
+		console.log("SVG Elements", svgElements())
+
+		const svgElementIndex = svgElements().findIndex((svgElement) => svgElement !== selectedSVGElements()[0])
+		console.log(xb1, yb1, xb2, yb2)
+		console.log(svgElements()[svgElementIndex])
 
 		setSVGElements((svgElements) => {
-			const onClickFunction = svgElements[svgElementIndex].onclick
-			svgElements[svgElementIndex] = <line x1={xb1} y1={yb1} x2={newXb2} y2={newYb2} stroke='gray' stroke-width={3} onClick={onClickFunction!}/> as SVGLineElement
-			return svgElements
+			//const onClickFunction = svgElements[svgElementIndex].onclick
+			//onClick={() => {onClickFunction!}}
+			svgElements[svgElementIndex] = <line x1={xb1} y1={yb1} x2={newXb2} y2={newYb2} stroke='gray' stroke-width={3} onClick={selectElement}/> as SVGLineElement
+			return [...svgElements]
 		})
 
-		console.log(newXb2, newYb2)
-		console.log(svgElements())
-		console.log(selectedSVGElements())
-
-		setSelectedSVGElements((selectedSVGElements) => {
-			selectedSVGElements[1] = svgElements()[svgElementIndex]
-			return selectedSVGElements
-		})
-
-		// Math maybe wrong
-		// Not updating right away
-		// Isn't firing when I change the angle
+		// Not correctly selected line.
 		// Selecting lines after they are changed
 	})
 

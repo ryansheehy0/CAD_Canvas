@@ -1,10 +1,11 @@
-import Solid, {createEffect} from 'solid-js'
+import Solid from 'solid-js'
 import { useGlobalContext } from '../../App'
 import line from "../../assets/tools/line.svg"
 import { twMerge } from 'tailwind-merge'
+import { selectElement } from '../../utilityFunctions'
 
 const Line: Solid.Component = () => {
-	const {svgElements, setSVGElements, setMouseDown, setMouseMove, selectedCommand, setSelectedCommand, selectedSVGElements, setSelectedSVGElements} = useGlobalContext()
+	const {svgElements, setSVGElements, setMouseDown, setMouseMove, selectedCommand, setSelectedCommand} = useGlobalContext()
 
 	let isDrawing = false
 	let lineIndex = 0
@@ -23,45 +24,13 @@ const Line: Solid.Component = () => {
 		isDrawing = true
 	}
 
-	// Change color of selected lines
-	createEffect(() => {
-		for(const svgElement of svgElements()){
-			if(selectedSVGElements().includes(svgElement)){
-				// Selected svg elements
-				svgElement.setAttribute('stroke', 'blue')
-			}else{
-				// Not selected svg elements
-				svgElement.setAttribute('stroke', 'gray')
-			}
-		}
-	})
-
-	function svgLineClicked(event: MouseEvent){
-		if(selectedCommand() === 'line') return
-		const svgLineElement: SVGLineElement = event.target as SVGLineElement
-		if(svgLineElement.getAttribute('stroke') === 'blue'){
-			setSelectedSVGElements((selectedSVGElements) => {
-				return selectedSVGElements.filter((selectedSVGElement) => {
-					return selectedSVGElement !== event.target
-				})
-			})
-		}else{
-			setSelectedSVGElements((selectedSVGElements) => {
-				return [
-					...selectedSVGElements,
-					svgLineElement
-				]
-			})
-		}
-	}
-
 	const lineMouseMove = (event: MouseEvent): void => {
 		if(!isDrawing) return
 		const {offsetX, offsetY} = event
 		setSVGElements((svgElements) => {
 			let x1 = svgElements[lineIndex].x1.baseVal.value
 			let y1 = svgElements[lineIndex].y1.baseVal.value
-			svgElements[lineIndex] = <line x1={x1} y1={y1} x2={offsetX} y2={offsetY} stroke='gray' stroke-width={3} onClick={svgLineClicked} /> as SVGLineElement
+			svgElements[lineIndex] = <line x1={x1} y1={y1} x2={offsetX} y2={offsetY} stroke='gray' stroke-width={3} onClick={selectElement} /> as SVGLineElement
 			return [...svgElements]
 		})
 	}

@@ -31,6 +31,8 @@ An SVG editor in the style of 2d CAD.
 - Catmull-Rom spline
 - Natural cubic spline
 - B-spline
+- Equation
+	- Type equation and it graphs it out. Define scale, constraints in x and y
 
 ### Settings for all tools
 - Construction or not
@@ -41,8 +43,8 @@ An SVG editor in the style of 2d CAD.
 
 ### Constraints
 - Angle
-	- Parallel
-	- Perpendicular
+	- Parallel(Don't need to include)
+	- Perpendicular(Don't need to include)
 - X-axis/Horizontal
 - Y-axis/Vertical
 - Point to line

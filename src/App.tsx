@@ -1,14 +1,14 @@
 import CommandSideBar from "./components/CommandSideBar"
 import UtilitySideBar from "./components/UtilitySideBar"
-import Solid, { createContext, createSignal, useContext } from "solid-js"
+import { createContext, createSignal, useContext } from "solid-js"
 
-type SVGElements = SVGLineElement
+export type SVGElements = SVGLineElement
 
 const [selectedCommand, setSelectedCommand] = createSignal<"line" | "angle" | null>(null)
 const [mouseDown, setMouseDown] = createSignal<((event: MouseEvent) => void) | null>(null)
 const [mouseMove, setMouseMove] = createSignal<((event: MouseEvent) => void) | null>(null)
-const [selectedSVGElements, setSelectedSVGElements] = createSignal<SVGElements[]>([])
 const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
+export { svgElements }
 type CommandSettings = {
   form: HTMLFormElement
 } & {[key: string]: any} | null
@@ -18,7 +18,6 @@ const providerValues = {
   selectedCommand, setSelectedCommand,
   mouseDown, setMouseDown,
   mouseMove, setMouseMove,
-  selectedSVGElements, setSelectedSVGElements,
   svgElements, setSVGElements,
   commandSettings, setCommandSettings
 }
