@@ -8,7 +8,7 @@ const [selectedCommand, setSelectedCommand] = createSignal<"line" | "angle" | nu
 const [mouseDown, setMouseDown] = createSignal<((event: MouseEvent) => void) | null>(null)
 const [mouseMove, setMouseMove] = createSignal<((event: MouseEvent) => void) | null>(null)
 const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
-export { svgElements }
+export { svgElements, setSVGElements, selectedCommand }
 type CommandSettings = {
   form: HTMLFormElement
 } & {[key: string]: any} | null
@@ -30,11 +30,14 @@ export function useGlobalContext() {
   return value
 }
 
+export let svgRef: SVGSVGElement
+
 function App(){
   return (
     <globalContext.Provider value={providerValues}>
       <CommandSideBar/>
       <svg xmlns="http://www.w3.org/2000/svg"
+        ref={svgRef!}
         onMouseDown={mouseDown() ? mouseDown() as (event: MouseEvent) => void : undefined}
         onMouseMove={mouseMove() ? mouseMove() as (event: MouseEvent) => void : undefined}
         class="w-[calc(100vw-448px)] h-screen absolute top-0 left-56 bg-black">
