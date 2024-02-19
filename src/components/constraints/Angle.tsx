@@ -88,19 +88,21 @@ const Angle: Solid.Component = () => {
 				form: (
 					<form onSubmit={(event) => {event.preventDefault()}} class='text-black w-full h-1/2'>
 						<label for='angle'>Angle: </label>
-						<input id='angle' type='number' min={0} max={360} value={commandSettings()?.angle}
+						<input id='angle' type='number' step="any" min={0} max={360} value="90"
 							onInput={(event) => {
+								// Do better angle input. Maybe remove the value={angle}
+								// commandSettings()?.angle % 1 > 0 ? commandSettings()?.angle : commandSettings()?.angle.toFixed(1) 
 								setCommandSettings((commandSettings) => {
 									return {
 										form: commandSettings!.form,
-										angle: parseInt(event.target.value)
+										angle: event.target.valueAsNumber
 									}
 								})
 							}}
-						class='bg-white border-2 border-black focus:outline-none pl-1 w-14'></input>
+						class='bg-white border-2 border-black focus:outline-none pl-1 w-3/4'></input>
 					</form> as HTMLFormElement
 				),
-				angle: 90
+				angle: 90.0
 			})
 			setSelectedCommand('angle')
 		}
