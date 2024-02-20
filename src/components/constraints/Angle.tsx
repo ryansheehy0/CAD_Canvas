@@ -1,8 +1,9 @@
-import Solid, { createEffect } from 'solid-js'
+import Solid, { createEffect, For } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
-import { useGlobalContext } from '../../App'
+import { useGlobalContext, SVGElements } from '../../App'
 import { selectElement, getSelectedElements, mouseEnterElement, mouseLeaveElement } from '../../utilityFunctions'
+import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select"
 
 const Angle: Solid.Component = () => {
 	const {selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, commandSettings, setCommandSettings, svgElements, setSVGElements} = useGlobalContext()
@@ -77,21 +78,49 @@ const Angle: Solid.Component = () => {
 		})
 	})
 
+	/*
+						<label for="lineA">Selected lin A: </label>
+						<select id="lineA" onMouseEnter={() => console.log("Hovering")}>
+							<option onMouseEnter={() => console.log("Hovering")} value={`x1:${svgElements()[0].x1.baseVal.value} y1:${svgElements()[0].y1.baseVal.value} x2:${svgElements()[0].x2.baseVal.value} y2:${svgElements()[0].y2.baseVal.value}`}>{`x1:${svgElements()[0].x1.baseVal.value} y1:${svgElements()[0].y1.baseVal.value} x2:${svgElements()[0].x2.baseVal.value} y2:${svgElements()[0].y2.baseVal.value}`}</option>
+							<option onMouseEnter={() => console.log("Hovering")} value={`x1:${svgElements()[1].x1.baseVal.value} y1:${svgElements()[1].y1.baseVal.value} x2:${svgElements()[1].x2.baseVal.value} y2:${svgElements()[1].y2.baseVal.value}`}>{`x1:${svgElements()[1].x1.baseVal.value} y1:${svgElements()[1].y1.baseVal.value} x2:${svgElements()[1].x2.baseVal.value} y2:${svgElements()[1].y2.baseVal.value}`}</option>
+
+							{/*
+							{svgElements().map(item => (
+								<option value={`x1:${item.x1} y1:${item.y1} x2:${item.x2} y2:${item.y2}`}>{item}</option>
+							))}
+							}
+							{/*
+							<For each={svgElements()}>
+								{(item: SVGElements) => <option value={`x1:${item.x1} y1:${item.y1} x2:${item.x2} y2:${item.y2}`}>{item}</option> }
+							</For>
+							}
+
+	*/
+
 	function angleClicked(){
 		if(selectedCommand() == 'angle'){
 			setSelectedCommand(null)
 		}else{
 			setMouseDown(() => () => {})
 			setMouseMove(() => () => {})
-			//setSelectedSVGElements([])
 			setCommandSettings({
 				form: (
 					<form onSubmit={(event) => {event.preventDefault()}} class='text-black w-full h-1/2'>
+					<Select
+						options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
+						itemComponent={props => <SelectItem item={props.item}>{props.item.rawValue}</SelectItem>}
+					>
+						<SelectTrigger>
+							<SelectValue<string>>{state => state.selectedOption()}</SelectValue>
+						</SelectTrigger>
+						<SelectContent />
+					</Select>
+
 						<label for='angle'>Angle: </label>
 						<input id='angle' type='number' step="any" min={0} max={360} value="90"
 							onInput={(event) => {
-								// Do better angle input. Maybe remove the value={angle}
-								// commandSettings()?.angle % 1 > 0 ? commandSettings()?.angle : commandSettings()?.angle.toFixed(1) 
+								// commandSettings()?.angle % 1 > 0 ? commandSettings()?.angle : commandSettings()?.angle.toFixed(1)
+									// this allows you to change commandSettings().angle and it updates the angle in the form input.
 								setCommandSettings((commandSettings) => {
 									return {
 										form: commandSettings!.form,

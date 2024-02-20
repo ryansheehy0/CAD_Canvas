@@ -9,10 +9,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@kobalte/core": "^0.12.1",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-slot": "^1.0.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "lucide-react": "^0.334.0",
+    "shadcn-solid": "^0.5.2",
     "solid-js": "^1.8.7",
-    "tailwind-merge": "^2.2.1"
+    "tailwind-merge": "^2.2.1",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@types/node": "^20.11.19",
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1",
