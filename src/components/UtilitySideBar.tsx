@@ -11,5 +11,4 @@ const UtilitySideBar: Solid.Component = () => {
 	)
 }
 
-
 export default UtilitySideBar

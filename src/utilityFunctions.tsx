@@ -1,6 +1,7 @@
 import { SVGElements, svgElements, setSVGElements, svgRef, selectedCommand } from "./App"
 
 export function selectElement(event: MouseEvent): void{
+	console.log("clickeded")
 	if(selectedCommand() === 'line') return
 	const element = event.target as SVGElements
 	const svgElementIndex = svgElements().findIndex((svgElement) => svgElement === element)

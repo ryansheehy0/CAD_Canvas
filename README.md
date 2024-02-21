@@ -6,6 +6,8 @@ Combine the precision drawing of 2d cad programs like Fusion 360's sketching, wi
 
 An SVG editor in the style of 2d CAD.
 
+Useful for desktop(mouse and keyboard) instead of tablets(touch).
+
 ## Final Product
 - Timeline of events that can be undone.
 - Tabs for different pages
@@ -14,6 +16,7 @@ An SVG editor in the style of 2d CAD.
 	- Have a color view and a designing view
 - When you have 2 lines on top of each other you can right click and select which line you want
 - You can never have 2 or more points in the same position. They will be automatically joined.
+- Create animations with constraints
 
 ### Drawing tools
 - Line
@@ -120,8 +123,6 @@ Components are pages you can save and then be able to use in other pages. Like r
 1. Select lines
 1. Constrain the angle between lines
 1. Constrain a line to the X and Y axes
-
-Click constrain then select 1 or 2 objects
 
 line colors
 - Fully constrained: black

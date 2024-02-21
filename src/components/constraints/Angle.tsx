@@ -1,21 +1,14 @@
-import Solid, { createEffect, For } from 'solid-js'
+import Solid, { createEffect, createSignal, For } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
 import { useGlobalContext, SVGElements } from '../../App'
 import { selectElement, getSelectedElements, mouseEnterElement, mouseLeaveElement } from '../../utilityFunctions'
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
 
 const Angle: Solid.Component = () => {
 	const {selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, commandSettings, setCommandSettings, svgElements, setSVGElements} = useGlobalContext()
-
-	// Limit the number of selected svg elements to 2 when angle is active
-	/*
-	createEffect(() => {
-		if(selectedCommand() !== 'angle') return
-		if(selectedSVGElements().length <= 2) return
-		setSelectedSVGElements((selectedSVGElements) => selectedSVGElements.slice(0, 2))
-	})
-	*/
+	let selectedLineAIndex: number
 
 	function tanDegrees(degree: number){
 		return Math.tan(degree * (Math.PI/180))
@@ -78,23 +71,58 @@ const Angle: Solid.Component = () => {
 		})
 	})
 
-	/*
-						<label for="lineA">Selected lin A: </label>
-						<select id="lineA" onMouseEnter={() => console.log("Hovering")}>
-							<option onMouseEnter={() => console.log("Hovering")} value={`x1:${svgElements()[0].x1.baseVal.value} y1:${svgElements()[0].y1.baseVal.value} x2:${svgElements()[0].x2.baseVal.value} y2:${svgElements()[0].y2.baseVal.value}`}>{`x1:${svgElements()[0].x1.baseVal.value} y1:${svgElements()[0].y1.baseVal.value} x2:${svgElements()[0].x2.baseVal.value} y2:${svgElements()[0].y2.baseVal.value}`}</option>
-							<option onMouseEnter={() => console.log("Hovering")} value={`x1:${svgElements()[1].x1.baseVal.value} y1:${svgElements()[1].y1.baseVal.value} x2:${svgElements()[1].x2.baseVal.value} y2:${svgElements()[1].y2.baseVal.value}`}>{`x1:${svgElements()[1].x1.baseVal.value} y1:${svgElements()[1].y1.baseVal.value} x2:${svgElements()[1].x2.baseVal.value} y2:${svgElements()[1].y2.baseVal.value}`}</option>
+	function mouseEnterLineSelection(index: number){
+		console.log("enter", index)
+		const mouseEnterEvent = new MouseEvent('mouseenter', {
+			view: window,
+			bubbles: true,
+			cancelable: false
+		})
+		svgElements()[index].dispatchEvent(mouseEnterEvent)
+	}
 
-							{/*
-							{svgElements().map(item => (
-								<option value={`x1:${item.x1} y1:${item.y1} x2:${item.x2} y2:${item.y2}`}>{item}</option>
-							))}
-							}
-							{/*
-							<For each={svgElements()}>
-								{(item: SVGElements) => <option value={`x1:${item.x1} y1:${item.y1} x2:${item.x2} y2:${item.y2}`}>{item}</option> }
-							</For>
-							}
+	function mouseLeaveLineSelection(index: number){
+		const mouseLeaveEvent = new MouseEvent('mouseleave', {
+			view: window,
+			bubbles: true,
+			cancelable: false
+		})
+		svgElements()[index].dispatchEvent(mouseLeaveEvent)
+	}
 
+	function clickLineSelection(index: number){
+		// Unselect the previously selected line
+		if(selectedLineAIndex === index){
+			// run selected on selectedLine
+		}else{
+			// run selected on index
+			// set selectedLineA
+			if(selectedLineAIndex){
+				// run selected on selectedLine
+			}
+		}
+
+		const clickEvent = new MouseEvent("click", {
+				"view": window,
+				"bubbles": true,
+				"cancelable": false
+		})
+		svgElements()[index].dispatchEvent(clickEvent)
+
+		setTimeout(() => {
+			// This delay is there to clear any mouse enter events that fire after the click
+			for(const svgElement of svgElements()){
+				const mouseLeaveEvent = new MouseEvent('mouseleave', {
+					view: window,
+					bubbles: true,
+					cancelable: false
+				})
+				svgElement.dispatchEvent(mouseLeaveEvent)
+			}
+		}, 500)
+	}
+
+	/*(${svgElement.x1.baseVal.value},${svgElement.y1.baseVal.value}) - (${svgElement.x2.baseVal.value},${svgElement.y2.baseVal.value})
 	*/
 
 	function angleClicked(){
@@ -107,11 +135,15 @@ const Angle: Solid.Component = () => {
 				form: (
 					<form onSubmit={(event) => {event.preventDefault()}} class='text-black w-full h-1/2'>
 					<Select
-						options={["Apple", "Banana", "Blueberry", "Grapes", "Pineapple"]}
-						itemComponent={props => <SelectItem item={props.item}>{props.item.rawValue}</SelectItem>}
+						placeholder="Select line A..."
+						options={svgElements().map((svgElement, index) => `${index}`)}
+						itemComponent={props => <SelectItem onMouseEnter={() => mouseEnterLineSelection(props.item.index)} onMouseLeave={() => mouseLeaveLineSelection(props.item.index)} onClick={() => clickLineSelection(props.item.index)} item={props.item}>{props.item.rawValue}</SelectItem>}
 					>
 						<SelectTrigger>
-							<SelectValue<string>>{state => state.selectedOption()}</SelectValue>
+							<SelectValue<string>>{(state) => {
+								selectedLineAIndex = parseInt(state.selectedOption())
+								return state.selectedOption()
+							}}</SelectValue>
 						</SelectTrigger>
 						<SelectContent />
 					</Select>
@@ -138,14 +170,14 @@ const Angle: Solid.Component = () => {
 	}
 
 	return (
-		<button
+		<Button
 			onClick={angleClicked}
 			class={twMerge(
 				'bg-white border border-black text-black rounded-none w-8 h-8 p-0 m-0 text-base hover:border-black focus:outline-none',
 				selectedCommand() == 'angle' ? "border-2" : "border",
 				"flex justify-center items-center")}>
 			<img src={angle} class='w-6 h-6'/>
-		</button>
+		</Button>
 	)
 }
 
