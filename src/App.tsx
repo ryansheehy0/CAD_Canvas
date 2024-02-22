@@ -8,11 +8,12 @@ const [selectedCommand, setSelectedCommand] = createSignal<"line" | "angle" | nu
 const [mouseDown, setMouseDown] = createSignal<((event: MouseEvent) => void) | null>(null)
 const [mouseMove, setMouseMove] = createSignal<((event: MouseEvent) => void) | null>(null)
 const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
-export { svgElements, setSVGElements, selectedCommand }
-type CommandSettings = {
+export type CommandSettings = {
   form: HTMLFormElement
 } & {[key: string]: any} | null
 const [commandSettings, setCommandSettings] = createSignal<CommandSettings>(null)
+
+export { svgElements, setSVGElements, selectedCommand }
 
 const providerValues = {
   selectedCommand, setSelectedCommand,

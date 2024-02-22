@@ -1,8 +1,8 @@
-import Solid, { createEffect, createSignal } from 'solid-js'
+import Solid, { createEffect } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
-import { useGlobalContext } from '../../App'
-import { toggleElementSelection, unselectElement, getSelectedElements, mouseEnterElement, mouseLeaveElement, selectElement } from '../../utilityFunctions'
+import { useGlobalContext, CommandSettings } from '../../App'
+import { toggleElementSelection, unselectElement, mouseEnterElement, mouseLeaveElement, selectElement } from '../../utilityFunctions'
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 
@@ -19,21 +19,22 @@ const Angle: Solid.Component = () => {
 	let prevAngle = 0
 	createEffect(() => {
 		if(selectedCommand() !== 'angle') return
-		const selectedElements = getSelectedElements()
-		let svgElementIndex = svgElements().findIndex((svgElement) => svgElement !== selectedElements[0])
-		if(selectedElements.length !== 2) return
+
+		const lineAIndex = commandSettings()?.selectedLineAIndex
+		const lineBIndex = commandSettings()?.selectedLineBIndex
+		if(lineAIndex === null || lineBIndex === null) return
 
 		const theta = commandSettings()?.angle
 		if(theta === prevAngle) return
 		prevAngle = theta
 		if(theta < 0 || theta > 360 || Number.isNaN(theta)) return
 
-		const lineA = selectedElements[0]
+		const lineA = svgElements()[lineAIndex]
 			const xa1 = lineA.x1.baseVal.value
 			const ya1 = lineA.y1.baseVal.value
 			const xa2 = lineA.x2.baseVal.value
 			const ya2 = lineA.y2.baseVal.value
-		const lineB = selectedElements[1]
+		const lineB = svgElements()[lineBIndex]
 			const xb1 = lineB.x1.baseVal.value
 			const yb1 = lineB.y1.baseVal.value
 			const xb2 = lineB.x2.baseVal.value
@@ -65,7 +66,7 @@ const Angle: Solid.Component = () => {
 		}
 
 		setSVGElements((svgElements) => {
-			svgElements[svgElementIndex] = <line x1={xb1} y1={yb1} x2={newXb2} y2={newYb2} stroke='blue' stroke-width={3} data-selected={"true"} onClick={toggleElementSelection} onMouseEnter={mouseEnterElement} onMouseLeave={mouseLeaveElement} /> as SVGLineElement
+			svgElements[lineBIndex] = <line x1={xb1} y1={yb1} x2={newXb2} y2={newYb2} stroke='blue' stroke-width={3} data-selected={"true"} onClick={toggleElementSelection} onMouseEnter={mouseEnterElement} onMouseLeave={mouseLeaveElement} /> as SVGLineElement
 			return [...svgElements]
 		})
 	})
@@ -88,32 +89,60 @@ const Angle: Solid.Component = () => {
 		svgElements()[index].dispatchEvent(mouseLeaveEvent)
 	}
 
-	const [selectedLineAIndex, setSelectedLineAIndex] = createSignal<number | null>(null)
-	const [selectedLineBIndex, setSelectedLineBIndex] = createSignal<number | null>(null)
 	function clickLineSelection(index: number, lineAOrB: "A" | "B"){
 		if(lineAOrB === "A"){
-			if(selectedLineAIndex() === null){
+			if(commandSettings()?.selectedLineAIndex === null){
 				selectElement(index)
-				setSelectedLineAIndex(index)
-			}else if(selectedLineAIndex() === index){
+				setCommandSettings((commandSettings) => {
+					return {
+						...commandSettings,
+						selectedLineAIndex: index,
+					} as CommandSettings
+				})
+			}else if(commandSettings()?.selectedLineAIndex === index){
 				unselectElement(index)
-				setSelectedLineAIndex(null)
+				setCommandSettings((commandSettings) => {
+					return {
+						...commandSettings,
+						selectedLineAIndex: null,
+					} as CommandSettings
+				})
 			}else{
-				unselectElement(selectedLineAIndex()!)
+				unselectElement(commandSettings()?.selectedLineAIndex)
 				selectElement(index)
-				setSelectedLineAIndex(index)
+				setCommandSettings((commandSettings) => {
+					return {
+						...commandSettings,
+						selectedLineAIndex: index,
+					} as CommandSettings
+				})
 			}
 		}else{
-			if(selectedLineBIndex() === null){
+			if(commandSettings()?.selectedLineBIndex === null){
 				selectElement(index)
-				setSelectedLineBIndex(index)
-			}else if(selectedLineBIndex() === index){
+				setCommandSettings((commandSettings) => {
+					return {
+						...commandSettings,
+						selectedLineBIndex: index,
+					} as CommandSettings
+				})
+			}else if(commandSettings()?.selectedLineBIndex === index){
 				unselectElement(index)
-				setSelectedLineBIndex(null)
+				setCommandSettings((commandSettings) => {
+					return {
+						...commandSettings,
+						selectedLineBIndex: null,
+					} as CommandSettings
+				})
 			}else{
-				unselectElement(selectedLineBIndex()!)
+				unselectElement(commandSettings()?.selectedLineBIndex)
 				selectElement(index)
-				setSelectedLineBIndex(index)
+				setCommandSettings((commandSettings) => {
+					return {
+						...commandSettings,
+						selectedLineBIndex: index,
+					} as CommandSettings
+				})
 			}
 		}
 
@@ -141,7 +170,7 @@ const Angle: Solid.Component = () => {
 					<form onSubmit={(event) => {event.preventDefault()}} class='text-black w-full h-1/2'>
 						<Select
 							placeholder="Select line A..."
-							options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== selectedLineBIndex()?.toString())}
+							options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineBIndex?.toString())}
 							itemComponent={props =>
 								<SelectItem
 									onMouseEnter={() => mouseEnterLineSelection(parseInt(props.item.rawValue))}
@@ -159,7 +188,7 @@ const Angle: Solid.Component = () => {
 
 						<Select
 							placeholder="Select line B..."
-							options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== selectedLineAIndex()?.toString())}
+							options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineAIndex?.toString())}
 							itemComponent={props =>
 								<SelectItem
 									onMouseEnter={() => mouseEnterLineSelection(parseInt(props.item.rawValue))}
@@ -167,7 +196,8 @@ const Angle: Solid.Component = () => {
 									onClick={() => clickLineSelection(parseInt(props.item.rawValue), "B")}
 									item={props.item}>
 										{props.item.rawValue}
-								</SelectItem>}
+								</SelectItem>
+							}
 						>
 							<SelectTrigger>
 								<SelectValue<string>>{(state) => state.selectedOption()}</SelectValue>
@@ -182,15 +212,17 @@ const Angle: Solid.Component = () => {
 									// this allows you to change commandSettings().angle and it updates the angle in the form input.
 								setCommandSettings((commandSettings) => {
 									return {
-										form: commandSettings!.form,
+										...commandSettings,
 										angle: event.target.valueAsNumber
-									}
+									} as CommandSettings
 								})
 							}}
 						class='bg-white border-2 border-black focus:outline-none pl-1 w-3/4'></input>
 					</form> as HTMLFormElement
 				),
-				angle: 90.0
+				angle: 90.0,
+				selectedLineAIndex: null,
+				selectedLineBIndex: null
 			})
 			setSelectedCommand('angle')
 		}
