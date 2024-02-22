@@ -8,6 +8,15 @@ An SVG editor in the style of 2d CAD.
 
 Useful for desktop(mouse and keyboard) instead of tablets(touch).
 
+How is it different from inkscape?
+- Faster designing because of constraints and dimensions. Things snap to where they are supposed to be.
+- Can produce dimensionally accurate logos
+- Can produce logos which have each element constrained to one another
+	- No need to manually line lines together
+	- https://www.youtube.com/watch?v=I-6ljbgstl8
+- Can save and re-use components
+- Run on the web
+
 ## Final Product
 - Timeline of events that can be undone.
 - Tabs for different pages
@@ -17,6 +26,12 @@ Useful for desktop(mouse and keyboard) instead of tablets(touch).
 - When you have 2 lines on top of each other you can right click and select which line you want
 - You can never have 2 or more points in the same position. They will be automatically joined.
 - Create animations with constraints
+	- Maybe not include. Feature creep
+- Can have multiple layers and hide and un-hide different layers
+	- Can move components between layers
+	- Maybe not include. Feature creep
+- Supports CMYK colors for print color accuracy
+- Used to make simple logos. Not really advanced features like with inkscape.
 
 ### Drawing tools
 - Line
@@ -129,3 +144,6 @@ line colors
 - Not constrained: gray
 - Selected: blue
 - Constructed: dashed 4 4
+
+## Should be able to replicate in software
+![poster_example](./poster_example.png)

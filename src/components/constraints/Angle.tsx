@@ -1,14 +1,13 @@
-import Solid, { createEffect, createSignal, For } from 'solid-js'
+import Solid, { createEffect, createSignal } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
-import { useGlobalContext, SVGElements } from '../../App'
-import { selectElement, getSelectedElements, mouseEnterElement, mouseLeaveElement } from '../../utilityFunctions'
+import { useGlobalContext } from '../../App'
+import { toggleElementSelection, unselectElement, getSelectedElements, mouseEnterElement, mouseLeaveElement, selectElement } from '../../utilityFunctions'
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 
 const Angle: Solid.Component = () => {
 	const {selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, commandSettings, setCommandSettings, svgElements, setSVGElements} = useGlobalContext()
-	let selectedLineAIndex: number
 
 	function tanDegrees(degree: number){
 		return Math.tan(degree * (Math.PI/180))
@@ -66,13 +65,12 @@ const Angle: Solid.Component = () => {
 		}
 
 		setSVGElements((svgElements) => {
-			svgElements[svgElementIndex] = <line x1={xb1} y1={yb1} x2={newXb2} y2={newYb2} stroke='blue' stroke-width={3} data-selected={"true"} onClick={selectElement} onMouseEnter={mouseEnterElement} onMouseLeave={mouseLeaveElement} /> as SVGLineElement
+			svgElements[svgElementIndex] = <line x1={xb1} y1={yb1} x2={newXb2} y2={newYb2} stroke='blue' stroke-width={3} data-selected={"true"} onClick={toggleElementSelection} onMouseEnter={mouseEnterElement} onMouseLeave={mouseLeaveElement} /> as SVGLineElement
 			return [...svgElements]
 		})
 	})
 
 	function mouseEnterLineSelection(index: number){
-		console.log("enter", index)
 		const mouseEnterEvent = new MouseEvent('mouseenter', {
 			view: window,
 			bubbles: true,
@@ -90,24 +88,34 @@ const Angle: Solid.Component = () => {
 		svgElements()[index].dispatchEvent(mouseLeaveEvent)
 	}
 
-	function clickLineSelection(index: number){
-		// Unselect the previously selected line
-		if(selectedLineAIndex === index){
-			// run selected on selectedLine
+	const [selectedLineAIndex, setSelectedLineAIndex] = createSignal<number | null>(null)
+	const [selectedLineBIndex, setSelectedLineBIndex] = createSignal<number | null>(null)
+	function clickLineSelection(index: number, lineAOrB: "A" | "B"){
+		if(lineAOrB === "A"){
+			if(selectedLineAIndex() === null){
+				selectElement(index)
+				setSelectedLineAIndex(index)
+			}else if(selectedLineAIndex() === index){
+				unselectElement(index)
+				setSelectedLineAIndex(null)
+			}else{
+				unselectElement(selectedLineAIndex()!)
+				selectElement(index)
+				setSelectedLineAIndex(index)
+			}
 		}else{
-			// run selected on index
-			// set selectedLineA
-			if(selectedLineAIndex){
-				// run selected on selectedLine
+			if(selectedLineBIndex() === null){
+				selectElement(index)
+				setSelectedLineBIndex(index)
+			}else if(selectedLineBIndex() === index){
+				unselectElement(index)
+				setSelectedLineBIndex(null)
+			}else{
+				unselectElement(selectedLineBIndex()!)
+				selectElement(index)
+				setSelectedLineBIndex(index)
 			}
 		}
-
-		const clickEvent = new MouseEvent("click", {
-				"view": window,
-				"bubbles": true,
-				"cancelable": false
-		})
-		svgElements()[index].dispatchEvent(clickEvent)
 
 		setTimeout(() => {
 			// This delay is there to clear any mouse enter events that fire after the click
@@ -119,11 +127,8 @@ const Angle: Solid.Component = () => {
 				})
 				svgElement.dispatchEvent(mouseLeaveEvent)
 			}
-		}, 500)
+		}, 400)
 	}
-
-	/*(${svgElement.x1.baseVal.value},${svgElement.y1.baseVal.value}) - (${svgElement.x2.baseVal.value},${svgElement.y2.baseVal.value})
-	*/
 
 	function angleClicked(){
 		if(selectedCommand() == 'angle'){
@@ -134,19 +139,41 @@ const Angle: Solid.Component = () => {
 			setCommandSettings({
 				form: (
 					<form onSubmit={(event) => {event.preventDefault()}} class='text-black w-full h-1/2'>
-					<Select
-						placeholder="Select line A..."
-						options={svgElements().map((svgElement, index) => `${index}`)}
-						itemComponent={props => <SelectItem onMouseEnter={() => mouseEnterLineSelection(props.item.index)} onMouseLeave={() => mouseLeaveLineSelection(props.item.index)} onClick={() => clickLineSelection(props.item.index)} item={props.item}>{props.item.rawValue}</SelectItem>}
-					>
-						<SelectTrigger>
-							<SelectValue<string>>{(state) => {
-								selectedLineAIndex = parseInt(state.selectedOption())
-								return state.selectedOption()
-							}}</SelectValue>
-						</SelectTrigger>
-						<SelectContent />
-					</Select>
+						<Select
+							placeholder="Select line A..."
+							options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== selectedLineBIndex()?.toString())}
+							itemComponent={props =>
+								<SelectItem
+									onMouseEnter={() => mouseEnterLineSelection(parseInt(props.item.rawValue))}
+									onMouseLeave={() => mouseLeaveLineSelection(parseInt(props.item.rawValue))}
+									onClick={() => clickLineSelection(parseInt(props.item.rawValue), "A")}
+									item={props.item}>
+										{props.item.rawValue}
+								</SelectItem>}
+						>
+							<SelectTrigger>
+								<SelectValue<string>>{(state) => state.selectedOption()}</SelectValue>
+							</SelectTrigger>
+							<SelectContent />
+						</Select>
+
+						<Select
+							placeholder="Select line B..."
+							options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== selectedLineAIndex()?.toString())}
+							itemComponent={props =>
+								<SelectItem
+									onMouseEnter={() => mouseEnterLineSelection(parseInt(props.item.rawValue))}
+									onMouseLeave={() => mouseLeaveLineSelection(parseInt(props.item.rawValue))}
+									onClick={() => clickLineSelection(parseInt(props.item.rawValue), "B")}
+									item={props.item}>
+										{props.item.rawValue}
+								</SelectItem>}
+						>
+							<SelectTrigger>
+								<SelectValue<string>>{(state) => state.selectedOption()}</SelectValue>
+							</SelectTrigger>
+							<SelectContent />
+						</Select>
 
 						<label for='angle'>Angle: </label>
 						<input id='angle' type='number' step="any" min={0} max={360} value="90"

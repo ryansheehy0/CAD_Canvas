@@ -2,7 +2,7 @@ import Solid from 'solid-js'
 import { useGlobalContext } from '../../App'
 import line from "../../assets/tools/line.svg"
 import { twMerge } from 'tailwind-merge'
-import { selectElement, mouseEnterElement, mouseLeaveElement } from '../../utilityFunctions'
+import { toggleElementSelection, mouseEnterElement, mouseLeaveElement } from '../../utilityFunctions'
 import { Button } from "@/components/ui/button"
 
 const Line: Solid.Component = () => {
@@ -31,7 +31,7 @@ const Line: Solid.Component = () => {
 		setSVGElements((svgElements) => {
 			let x1 = svgElements[lineIndex].x1.baseVal.value
 			let y1 = svgElements[lineIndex].y1.baseVal.value
-			svgElements[lineIndex] = <line x1={x1} y1={y1} x2={offsetX} y2={offsetY} stroke='gray' stroke-width={3} data-selected={"false"} onClick={selectElement} onMouseEnter={mouseEnterElement} onMouseLeave={mouseLeaveElement} /> as SVGLineElement
+			svgElements[lineIndex] = <line x1={x1} y1={y1} x2={offsetX} y2={offsetY} stroke='gray' stroke-width={3} data-selected={"false"} onClick={toggleElementSelection} onMouseEnter={mouseEnterElement} onMouseLeave={mouseLeaveElement} /> as SVGLineElement
 			return [...svgElements]
 		})
 	}
