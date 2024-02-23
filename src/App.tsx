@@ -1,51 +1,44 @@
 import CommandSideBar from "./components/CommandSideBar"
 import UtilitySideBar from "./components/UtilitySideBar"
-import { createContext, createSignal, useContext } from "solid-js"
-
-export type SVGElements = SVGLineElement
+import { createSignal } from "solid-js"
 
 const [selectedCommand, setSelectedCommand] = createSignal<"line" | "angle" | null>(null)
+  export { selectedCommand, setSelectedCommand}
+export type SVGElements = SVGLineElement
+const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
+// Command changing signals
+  // SVG canvas signals
 const [mouseDown, setMouseDown] = createSignal<((event: MouseEvent) => void) | null>(null)
 const [mouseMove, setMouseMove] = createSignal<((event: MouseEvent) => void) | null>(null)
-const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
+  // Utility side bar
 export type CommandSettings = {
   form: HTMLFormElement
 } & {[key: string]: any} | null
 const [commandSettings, setCommandSettings] = createSignal<CommandSettings>(null)
+  // Element event functions
+const [elementClicked, setElementClicked] = createSignal<((event: MouseEvent) => void) | null>(null)
+const [mouseEnterElement, setMouseEnterElement] = createSignal<((event: MouseEvent) => void) | null>(null)
+const [mouseLeaveElement, setMouseLeaveElement] = createSignal<((event: MouseEvent) => void) | null>(null)
 
-export { svgElements, setSVGElements, selectedCommand }
 
-const providerValues = {
-  selectedCommand, setSelectedCommand,
-  mouseDown, setMouseDown,
-  mouseMove, setMouseMove,
-  svgElements, setSVGElements,
-  commandSettings, setCommandSettings
-}
 
-const globalContext = createContext<typeof providerValues>()
-
-export function useGlobalContext() {
-  const value = useContext(globalContext)
-  if(value === undefined) throw new Error("useGlobalContext must be used within globalContext.Provider")
-  return value
-}
+export { svgElements, setSVGElements }
 
 export let svgRef: SVGSVGElement
 
 function App(){
   return (
-    <globalContext.Provider value={providerValues}>
+    <>
       <CommandSideBar/>
       <svg xmlns="http://www.w3.org/2000/svg"
         ref={svgRef!}
-        onMouseDown={mouseDown() ? mouseDown() as (event: MouseEvent) => void : undefined}
-        onMouseMove={mouseMove() ? mouseMove() as (event: MouseEvent) => void : undefined}
+        onMouseDown={mouseDown() || undefined}
+        onMouseMove={mouseMove() || undefined}
         class="w-[calc(100vw-448px)] h-screen absolute top-0 left-56 bg-black">
         {svgElements()}
       </svg>
       <UtilitySideBar/>
-    </globalContext.Provider>
+    </>
   )
 }
 

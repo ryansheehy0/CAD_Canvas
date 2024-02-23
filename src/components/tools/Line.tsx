@@ -2,7 +2,7 @@ import Solid from 'solid-js'
 import { useGlobalContext } from '../../App'
 import line from "../../assets/tools/line.svg"
 import { twMerge } from 'tailwind-merge'
-import { toggleElementSelection, mouseEnterElement, mouseLeaveElement } from '../../utilityFunctions'
+import { toggleElementSelection, mouseEnterElement, mouseLeaveElement } from '../../elementUtilityFunctions'
 import { Button } from "@/components/ui/button"
 
 const Line: Solid.Component = () => {

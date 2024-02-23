@@ -2,7 +2,7 @@ import Solid, { createEffect } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
 import { useGlobalContext, CommandSettings } from '../../App'
-import { toggleElementSelection, unselectElement, mouseEnterElement, mouseLeaveElement, selectElement } from '../../utilityFunctions'
+import { toggleElementSelection, unselectElement, mouseEnterElement, mouseLeaveElement, selectElement } from '../../elementUtilityFunctions'
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 
