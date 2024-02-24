@@ -1,13 +1,10 @@
 import Solid from 'solid-js'
-import { useGlobalContext } from '../../App'
+import { selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, svgElements, setSVGElements, setElementClicked, elementClicked, setMouseEnterElement, setMouseLeaveElement, mouseEnterElement, mouseLeaveElement } from '../../App'
 import line from "../../assets/tools/line.svg"
 import { twMerge } from 'tailwind-merge'
-import { toggleElementSelection, mouseEnterElement, mouseLeaveElement } from '../../elementUtilityFunctions'
 import { Button } from "@/components/ui/button"
 
 const Line: Solid.Component = () => {
-	const {svgElements, setSVGElements, setMouseDown, setMouseMove, selectedCommand, setSelectedCommand} = useGlobalContext()
-
 	let isDrawing = false
 	let lineIndex = 0
 
@@ -31,7 +28,14 @@ const Line: Solid.Component = () => {
 		setSVGElements((svgElements) => {
 			let x1 = svgElements[lineIndex].x1.baseVal.value
 			let y1 = svgElements[lineIndex].y1.baseVal.value
-			svgElements[lineIndex] = <line x1={x1} y1={y1} x2={offsetX} y2={offsetY} stroke='gray' stroke-width={3} data-selected={"false"} onClick={toggleElementSelection} onMouseEnter={mouseEnterElement} onMouseLeave={mouseLeaveElement} /> as SVGLineElement
+			svgElements[lineIndex] = (
+				<line x1={x1} y1={y1} x2={offsetX} y2={offsetY}
+					stroke='gray' stroke-width={3} data-selected={"false"}
+					onClick={(event: MouseEvent) => elementClicked() ? (elementClicked() as (event: MouseEvent) => void)(event) : undefined}
+					onMouseEnter={(event: MouseEvent) => mouseEnterElement() ? (mouseEnterElement() as (event: MouseEvent) => void)(event) : undefined}
+					onMouseLeave={(event: MouseEvent) => mouseLeaveElement() ? (mouseLeaveElement() as (event: MouseEvent) => void)(event) : undefined}
+				/>
+			) as SVGLineElement
 			return [...svgElements]
 		})
 	}
@@ -41,10 +45,19 @@ const Line: Solid.Component = () => {
 			setSelectedCommand(null)
 			setMouseDown(null)
 			setMouseMove(null)
+			// Remove element events
+			setElementClicked(null)
+			setMouseEnterElement(null)
+			setMouseLeaveElement(null)
 		}else{
 			setSelectedCommand('line')
+			console.log("set line functions")
 			setMouseDown(() => lineMouseDown)
 			setMouseMove(() => lineMouseMove)
+			// Remove element events
+			setElementClicked(null)
+			setMouseEnterElement(null)
+			setMouseLeaveElement(null)
 		}
 	}
 

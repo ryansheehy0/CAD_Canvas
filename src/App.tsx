@@ -2,27 +2,24 @@ import CommandSideBar from "./components/CommandSideBar"
 import UtilitySideBar from "./components/UtilitySideBar"
 import { createSignal } from "solid-js"
 
-const [selectedCommand, setSelectedCommand] = createSignal<"line" | "angle" | null>(null)
-  export { selectedCommand, setSelectedCommand}
+export const [selectedCommand, setSelectedCommand] = createSignal<"line" | "angle" | null>(null)
 export type SVGElements = SVGLineElement
-const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
+export const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
 // Command changing signals
   // SVG canvas signals
-const [mouseDown, setMouseDown] = createSignal<((event: MouseEvent) => void) | null>(null)
-const [mouseMove, setMouseMove] = createSignal<((event: MouseEvent) => void) | null>(null)
+export const [mouseDown, setMouseDown] = createSignal<((event: MouseEvent) => void) | null>(null)
+export const [mouseMove, setMouseMove] = createSignal<((event: MouseEvent) => void) | null>(null)
   // Utility side bar
 export type CommandSettings = {
   form: HTMLFormElement
 } & {[key: string]: any} | null
-const [commandSettings, setCommandSettings] = createSignal<CommandSettings>(null)
+export const [commandSettings, setCommandSettings] = createSignal<CommandSettings>(null)
   // Element event functions
-const [elementClicked, setElementClicked] = createSignal<((event: MouseEvent) => void) | null>(null)
-const [mouseEnterElement, setMouseEnterElement] = createSignal<((event: MouseEvent) => void) | null>(null)
-const [mouseLeaveElement, setMouseLeaveElement] = createSignal<((event: MouseEvent) => void) | null>(null)
+export const [elementClicked, setElementClicked] = createSignal<((event: MouseEvent) => void) | null>(null)
+export const [mouseEnterElement, setMouseEnterElement] = createSignal<((event: MouseEvent) => void) | null>(null)
+export const [mouseLeaveElement, setMouseLeaveElement] = createSignal<((event: MouseEvent) => void) | null>(null)
 
-
-
-export { svgElements, setSVGElements }
+// Implement the element event functions
 
 export let svgRef: SVGSVGElement
 
@@ -32,9 +29,10 @@ function App(){
       <CommandSideBar/>
       <svg xmlns="http://www.w3.org/2000/svg"
         ref={svgRef!}
-        onMouseDown={mouseDown() || undefined}
-        onMouseMove={mouseMove() || undefined}
-        class="w-[calc(100vw-448px)] h-screen absolute top-0 left-56 bg-black">
+        onMouseDown={(event: MouseEvent) => mouseDown() ? (mouseDown() as (event: MouseEvent) => void)(event) : undefined}
+        onMouseMove={(event: MouseEvent) => mouseMove() ? (mouseMove() as (event: MouseEvent) => void)(event) : undefined}
+        class="w-[calc(100vw-448px)] h-screen absolute top-0 left-56 bg-black"
+      >
         {svgElements()}
       </svg>
       <UtilitySideBar/>

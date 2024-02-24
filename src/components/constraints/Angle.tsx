@@ -1,13 +1,12 @@
 import Solid, { createEffect } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
-import { useGlobalContext, CommandSettings } from '../../App'
-import { toggleElementSelection, unselectElement, mouseEnterElement, mouseLeaveElement, selectElement } from '../../elementUtilityFunctions'
+import { selectedCommand, setSelectedCommand, CommandSettings, commandSettings, setCommandSettings, svgElements, setSVGElements, setMouseDown, setMouseMove, elementClicked, setElementClicked, mouseEnterElement, setMouseEnterElement, mouseLeaveElement, setMouseLeaveElement } from '../../App'
+import { toggleSelection, select, unselect, previewSelection, unPreviewSelection } from '../../elementUtilityFunctions'
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 
 const Angle: Solid.Component = () => {
-	const {selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, commandSettings, setCommandSettings, svgElements, setSVGElements} = useGlobalContext()
 
 	function tanDegrees(degree: number){
 		return Math.tan(degree * (Math.PI/180))
@@ -66,7 +65,14 @@ const Angle: Solid.Component = () => {
 		}
 
 		setSVGElements((svgElements) => {
-			svgElements[lineBIndex] = <line x1={xb1} y1={yb1} x2={newXb2} y2={newYb2} stroke='blue' stroke-width={3} data-selected={"true"} onClick={toggleElementSelection} onMouseEnter={mouseEnterElement} onMouseLeave={mouseLeaveElement} /> as SVGLineElement
+			svgElements[lineBIndex] = (
+				<line x1={xb1} y1={yb1} x2={newXb2} y2={newYb2}
+				stroke='blue' stroke-width={3} data-selected={"true"}
+				onClick={(event: MouseEvent) => elementClicked() ? (elementClicked() as (event: MouseEvent) => void)(event) : undefined}
+				onMouseEnter={(event: MouseEvent) => mouseEnterElement() ? (mouseEnterElement() as (event: MouseEvent) => void)(event) : undefined}
+				onMouseLeave={(event: MouseEvent) => mouseLeaveElement() ? (mouseLeaveElement() as (event: MouseEvent) => void)(event) : undefined}
+			/>
+			) as SVGLineElement
 			return [...svgElements]
 		})
 	})
@@ -92,7 +98,7 @@ const Angle: Solid.Component = () => {
 	function clickLineSelection(index: number, lineAOrB: "A" | "B"){
 		if(lineAOrB === "A"){
 			if(commandSettings()?.selectedLineAIndex === null){
-				selectElement(index)
+				select(index)
 				setCommandSettings((commandSettings) => {
 					return {
 						...commandSettings,
@@ -100,7 +106,7 @@ const Angle: Solid.Component = () => {
 					} as CommandSettings
 				})
 			}else if(commandSettings()?.selectedLineAIndex === index){
-				unselectElement(index)
+				unselect(index)
 				setCommandSettings((commandSettings) => {
 					return {
 						...commandSettings,
@@ -108,8 +114,8 @@ const Angle: Solid.Component = () => {
 					} as CommandSettings
 				})
 			}else{
-				unselectElement(commandSettings()?.selectedLineAIndex)
-				selectElement(index)
+				unselect(commandSettings()?.selectedLineAIndex)
+				select(index)
 				setCommandSettings((commandSettings) => {
 					return {
 						...commandSettings,
@@ -119,7 +125,7 @@ const Angle: Solid.Component = () => {
 			}
 		}else{
 			if(commandSettings()?.selectedLineBIndex === null){
-				selectElement(index)
+				select(index)
 				setCommandSettings((commandSettings) => {
 					return {
 						...commandSettings,
@@ -127,7 +133,7 @@ const Angle: Solid.Component = () => {
 					} as CommandSettings
 				})
 			}else if(commandSettings()?.selectedLineBIndex === index){
-				unselectElement(index)
+				unselect(index)
 				setCommandSettings((commandSettings) => {
 					return {
 						...commandSettings,
@@ -135,8 +141,8 @@ const Angle: Solid.Component = () => {
 					} as CommandSettings
 				})
 			}else{
-				unselectElement(commandSettings()?.selectedLineBIndex)
-				selectElement(index)
+				unselect(commandSettings()?.selectedLineBIndex)
+				select(index)
 				setCommandSettings((commandSettings) => {
 					return {
 						...commandSettings,
@@ -162,6 +168,9 @@ const Angle: Solid.Component = () => {
 	function angleClicked(){
 		if(selectedCommand() == 'angle'){
 			setSelectedCommand(null)
+			setElementClicked(null)
+			setMouseEnterElement(null)
+			setMouseLeaveElement(null)
 		}else{
 			setMouseDown(() => () => {})
 			setMouseMove(() => () => {})
@@ -224,6 +233,9 @@ const Angle: Solid.Component = () => {
 				selectedLineAIndex: null,
 				selectedLineBIndex: null
 			})
+			setElementClicked(() => toggleSelection)
+			setMouseEnterElement(() => previewSelection)
+			setMouseLeaveElement(() => unPreviewSelection)
 			setSelectedCommand('angle')
 		}
 	}

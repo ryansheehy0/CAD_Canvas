@@ -61,8 +61,8 @@ How is it different from inkscape?
 
 ### Constraints
 - Angle
-	- Parallel(Don't need to include)
-	- Perpendicular(Don't need to include)
+	- Parallel(Don't need to include)(0, 180, or 360 degrees)
+	- Perpendicular(Don't need to include)(90 or 270 degrees)
 - X-axis/Horizontal
 - Y-axis/Vertical
 - Point to line
