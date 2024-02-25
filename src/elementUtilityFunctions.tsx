@@ -1,13 +1,7 @@
-import { SVGElements, svgElements, setSVGElements, svgRef } from "./App"
-
-let numberOfSelections: number | null = null
+import { SVGElements, svgElements, setSVGElements, svgRef, setCommandSettings, commandSettings, CommandSettings } from "./App"
 
 // Selection functions
 export function select(indexOrEvent: number | MouseEvent): void{
-	if(numberOfSelections){
-		if(getNumberOfSelections() >= numberOfSelections) return
-	}
-
 	let elementIndex = getElementIndex(indexOrEvent)
 	setSVGElements((svgElements) => {
 		svgElements[elementIndex].dataset.selected = "true"
@@ -35,12 +29,8 @@ export function toggleSelection(indexOrEvent: number | MouseEvent): void{
 
 export function unselectAll(): void{
 	for(let i = 0; i < svgElements().length; i++){
-		unselectElement(i)
+		unselect(i)
 	}
-}
-
-export function limitNumberOfSelections(num: number): void{
-	numberOfSelections = num
 }
 
 function getSelectedElements(): SVGElements[]{
@@ -91,4 +81,13 @@ export function getElementIndex(indexOrEvent: number | MouseEvent): number{
 	}
 
 	return elementIndexFromEvent(indexOrEvent)
+}
+
+export function setCommandSettingsProperty(property: string, value: any){
+	setCommandSettings((commandSettings) => {
+		return {
+			...commandSettings,
+			[property]: value
+		} as CommandSettings
+	})
 }

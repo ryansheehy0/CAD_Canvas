@@ -1,8 +1,8 @@
 import Solid, { createEffect } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
-import { selectedCommand, setSelectedCommand, CommandSettings, commandSettings, setCommandSettings, svgElements, setSVGElements, setMouseDown, setMouseMove, elementClicked, setElementClicked, mouseEnterElement, setMouseEnterElement, mouseLeaveElement, setMouseLeaveElement } from '../../App'
-import { toggleSelection, select, unselect, previewSelection, unPreviewSelection, isSelected, getNumberOfSelections, getElementIndex } from '../../elementUtilityFunctions'
+import { selectedCommand, setSelectedCommand, commandSettings, setCommandSettings, svgElements, setSVGElements, setMouseDown, setMouseMove, elementClicked, setElementClicked, mouseEnterElement, setMouseEnterElement, mouseLeaveElement, setMouseLeaveElement } from '../../App'
+import { select, unselect, previewSelection, unPreviewSelection, isSelected, getElementIndex, setCommandSettingsProperty, unselectAll } from '../../elementUtilityFunctions'
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 
@@ -99,56 +99,26 @@ const Angle: Solid.Component = () => {
 		if(lineAOrB === "A"){
 			if(commandSettings()?.selectedLineAIndex === null){
 				select(index)
-				setCommandSettings((commandSettings) => {
-					return {
-						...commandSettings,
-						selectedLineAIndex: index,
-					} as CommandSettings
-				})
+				setCommandSettingsProperty("selectedLineAIndex", index)
 			}else if(commandSettings()?.selectedLineAIndex === index){
 				unselect(index)
-				setCommandSettings((commandSettings) => {
-					return {
-						...commandSettings,
-						selectedLineAIndex: null,
-					} as CommandSettings
-				})
+				setCommandSettingsProperty("selectedLineAIndex", null)
 			}else{
 				unselect(commandSettings()?.selectedLineAIndex)
 				select(index)
-				setCommandSettings((commandSettings) => {
-					return {
-						...commandSettings,
-						selectedLineAIndex: index,
-					} as CommandSettings
-				})
+				setCommandSettingsProperty("selectedLineAIndex", index)
 			}
 		}else{
 			if(commandSettings()?.selectedLineBIndex === null){
 				select(index)
-				setCommandSettings((commandSettings) => {
-					return {
-						...commandSettings,
-						selectedLineBIndex: index,
-					} as CommandSettings
-				})
+				setCommandSettingsProperty("selectedLineBIndex", index)
 			}else if(commandSettings()?.selectedLineBIndex === index){
 				unselect(index)
-				setCommandSettings((commandSettings) => {
-					return {
-						...commandSettings,
-						selectedLineBIndex: null,
-					} as CommandSettings
-				})
+				setCommandSettingsProperty("selectedLineBIndex", null)
 			}else{
 				unselect(commandSettings()?.selectedLineBIndex)
 				select(index)
-				setCommandSettings((commandSettings) => {
-					return {
-						...commandSettings,
-						selectedLineBIndex: index,
-					} as CommandSettings
-				})
+				setCommandSettingsProperty("selectedLineBIndex", index)
 			}
 		}
 
@@ -221,12 +191,7 @@ const Angle: Solid.Component = () => {
 							onInput={(event) => {
 								// commandSettings()?.angle % 1 > 0 ? commandSettings()?.angle : commandSettings()?.angle.toFixed(1)
 									// this allows you to change commandSettings().angle and it updates the angle in the form input.
-								setCommandSettings((commandSettings) => {
-									return {
-										...commandSettings,
-										angle: event.target.valueAsNumber
-									} as CommandSettings
-								})
+								setCommandSettingsProperty("angle", event.target.valueAsNumber)
 							}}
 						class='bg-white border-2 border-black focus:outline-none pl-1 w-3/4'></input>
 					</form> as HTMLFormElement
@@ -237,46 +202,28 @@ const Angle: Solid.Component = () => {
 			})
 			function elementClicked(event: MouseEvent){
 				const elementIndex = getElementIndex(event)
-				const numberOfSelections = getNumberOfSelections()
 				if(isSelected(event)){
 					// Unselect the right Line A or Line B
 					unselect(event)
-					setCommandSettings((commandSettings) => {
-						if(commandSettings?.selectedLineAIndex === elementIndex){
-							return {
-								...commandSettings,
-								selectedLineAIndex: null
-							} as CommandSettings
-						}else{
-							return {
-								...commandSettings,
-								selectedLineBIndex: null
-							} as CommandSettings
-						}
-					})
+					if(commandSettings()?.selectedLineAIndex === elementIndex){
+						setCommandSettingsProperty("selectedLineAIndex", null)
+					}else{
+						setCommandSettingsProperty("selectedLineBIndex", null)
+					}
 				}else{
-					if(numberOfSelections === 0){
+					if(commandSettings()?.selectedLineAIndex === null){
 						select(event)
-						setCommandSettings((commandSettings) => {
-							return {
-								...commandSettings,
-								selectedLineAIndex: elementIndex
-							} as CommandSettings
-						})
-					}else if(numberOfSelections === 1){
+						setCommandSettingsProperty("selectedLineAIndex", elementIndex)
+					}else if(commandSettings()?.selectedLineBIndex === null){
 						select(event)
-						setCommandSettings((commandSettings) => {
-							return {
-								...commandSettings,
-								selectedLineBIndex: elementIndex
-							} as CommandSettings
-						})
+						setCommandSettingsProperty("selectedLineBIndex", elementIndex)
 					}
 				}
 			}
 			setElementClicked(() => elementClicked)
 			setMouseEnterElement(() => previewSelection)
 			setMouseLeaveElement(() => unPreviewSelection)
+			unselectAll()
 			setSelectedCommand('angle')
 		}
 	}

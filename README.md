@@ -17,6 +17,9 @@ How is it different from inkscape?
 - Can save and re-use components
 - Run on the web
 
+Maybe focus more on making note taking diagrams rather than making logos/icons.
+- Would probably want to include some animation capabilities.
+
 ## Final Product
 - Timeline of events that can be undone.
 - Tabs for different pages
