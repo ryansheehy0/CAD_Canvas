@@ -26,13 +26,10 @@ export function unselect(indexOrEvent: number | MouseEvent): void{
 }
 
 export function toggleSelection(indexOrEvent: number | MouseEvent): void{
-	const elementIndex = getElementIndex(indexOrEvent)
-	const element = svgElements()[elementIndex]
-	const selected = element.dataset?.selected
-	if(selected === "true"){
-		unselect(elementIndex)
+	if(isSelected(indexOrEvent)){
+		unselect(indexOrEvent)
 	}else{
-		select(elementIndex)
+		select(indexOrEvent)
 	}
 }
 
@@ -50,8 +47,19 @@ function getSelectedElements(): SVGElements[]{
 	return [...svgRef.querySelectorAll<SVGElements>('[data-selected="true"]')]
 }
 
-function getNumberOfSelections(): number{
+export function getNumberOfSelections(): number{
 	return getSelectedElements().length
+}
+
+export function isSelected(indexOrEvent: number | MouseEvent){
+	const elementIndex = getElementIndex(indexOrEvent)
+	const element = svgElements()[elementIndex]
+	const selected = element.dataset?.selected
+	if(selected === "true"){
+		return true
+	}else{
+		return false
+	}
 }
 
 // Preview selection functions
@@ -77,7 +85,7 @@ function elementIndexFromEvent(event: MouseEvent): number{
 	return svgElements().findIndex((svgElement) => svgElement === element)
 }
 
-function getElementIndex(indexOrEvent: number | MouseEvent): number{
+export function getElementIndex(indexOrEvent: number | MouseEvent): number{
 	if(typeof indexOrEvent === "number"){
 		return indexOrEvent
 	}

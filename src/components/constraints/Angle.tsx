@@ -2,7 +2,7 @@ import Solid, { createEffect } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
 import { selectedCommand, setSelectedCommand, CommandSettings, commandSettings, setCommandSettings, svgElements, setSVGElements, setMouseDown, setMouseMove, elementClicked, setElementClicked, mouseEnterElement, setMouseEnterElement, mouseLeaveElement, setMouseLeaveElement } from '../../App'
-import { toggleSelection, select, unselect, previewSelection, unPreviewSelection } from '../../elementUtilityFunctions'
+import { toggleSelection, select, unselect, previewSelection, unPreviewSelection, isSelected, getNumberOfSelections, getElementIndex } from '../../elementUtilityFunctions'
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 
@@ -178,6 +178,7 @@ const Angle: Solid.Component = () => {
 				form: (
 					<form onSubmit={(event) => {event.preventDefault()}} class='text-black w-full h-1/2'>
 						<Select
+							value={commandSettings()?.selectedLineAIndex}
 							placeholder="Select line A..."
 							options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineBIndex?.toString())}
 							itemComponent={props =>
@@ -190,12 +191,13 @@ const Angle: Solid.Component = () => {
 								</SelectItem>}
 						>
 							<SelectTrigger>
-								<SelectValue<string>>{(state) => state.selectedOption()}</SelectValue>
+								<SelectValue<string>>{() => commandSettings()?.selectedLineAIndex}</SelectValue>
 							</SelectTrigger>
 							<SelectContent />
 						</Select>
 
 						<Select
+							value={commandSettings()?.selectedLineBIndex}
 							placeholder="Select line B..."
 							options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineAIndex?.toString())}
 							itemComponent={props =>
@@ -209,7 +211,7 @@ const Angle: Solid.Component = () => {
 							}
 						>
 							<SelectTrigger>
-								<SelectValue<string>>{(state) => state.selectedOption()}</SelectValue>
+								<SelectValue<string>>{() => commandSettings()?.selectedLineBIndex}</SelectValue>
 							</SelectTrigger>
 							<SelectContent />
 						</Select>
@@ -233,7 +235,46 @@ const Angle: Solid.Component = () => {
 				selectedLineAIndex: null,
 				selectedLineBIndex: null
 			})
-			setElementClicked(() => toggleSelection)
+			function elementClicked(event: MouseEvent){
+				const elementIndex = getElementIndex(event)
+				const numberOfSelections = getNumberOfSelections()
+				if(isSelected(event)){
+					// Unselect the right Line A or Line B
+					unselect(event)
+					setCommandSettings((commandSettings) => {
+						if(commandSettings?.selectedLineAIndex === elementIndex){
+							return {
+								...commandSettings,
+								selectedLineAIndex: null
+							} as CommandSettings
+						}else{
+							return {
+								...commandSettings,
+								selectedLineBIndex: null
+							} as CommandSettings
+						}
+					})
+				}else{
+					if(numberOfSelections === 0){
+						select(event)
+						setCommandSettings((commandSettings) => {
+							return {
+								...commandSettings,
+								selectedLineAIndex: elementIndex
+							} as CommandSettings
+						})
+					}else if(numberOfSelections === 1){
+						select(event)
+						setCommandSettings((commandSettings) => {
+							return {
+								...commandSettings,
+								selectedLineBIndex: elementIndex
+							} as CommandSettings
+						})
+					}
+				}
+			}
+			setElementClicked(() => elementClicked)
 			setMouseEnterElement(() => previewSelection)
 			setMouseLeaveElement(() => unPreviewSelection)
 			setSelectedCommand('angle')
