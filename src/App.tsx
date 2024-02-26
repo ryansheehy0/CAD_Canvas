@@ -2,7 +2,7 @@ import CommandSideBar from "./components/CommandSideBar"
 import UtilitySideBar from "./components/UtilitySideBar"
 import { createSignal } from "solid-js"
 
-export const [selectedCommand, setSelectedCommand] = createSignal<"line" | "angle" | null>(null)
+export const [selectedCommand, setSelectedCommand] = createSignal<"line" | "angle" | "horizontal" | null>(null)
 export type SVGElements = SVGLineElement
 export const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
 // Command changing signals
@@ -18,8 +18,6 @@ export const [commandSettings, setCommandSettings] = createSignal<CommandSetting
 export const [elementClicked, setElementClicked] = createSignal<((event: MouseEvent) => void) | null>(null)
 export const [mouseEnterElement, setMouseEnterElement] = createSignal<((event: MouseEvent) => void) | null>(null)
 export const [mouseLeaveElement, setMouseLeaveElement] = createSignal<((event: MouseEvent) => void) | null>(null)
-
-// Implement the element event functions
 
 export let svgRef: SVGSVGElement
 

@@ -2,12 +2,13 @@ import Solid, { createEffect } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
 import { selectedCommand, setSelectedCommand, commandSettings, setCommandSettings, svgElements, setSVGElements, setMouseDown, setMouseMove, elementClicked, setElementClicked, mouseEnterElement, setMouseEnterElement, mouseLeaveElement, setMouseLeaveElement } from '../../App'
-import { select, unselect, previewSelection, unPreviewSelection, isSelected, getElementIndex, setCommandSettingsProperty, unselectAll } from '../../elementUtilityFunctions'
+import { select, unselect, previewSelection, unPreviewSelection, isSelected, getElementIndex, setCommandSettingsProperty, unselectAll, clearSignals } from '../../elementUtilityFunctions'
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 
 const Angle: Solid.Component = () => {
 
+	// Helper functions
 	function tanDegrees(degree: number){
 		return Math.tan(degree * (Math.PI/180))
 	}
@@ -15,6 +16,7 @@ const Angle: Solid.Component = () => {
 		return Math.atan(num) * (180/Math.PI)
 	}
 
+	// Constraint logic
 	let prevAngle = 0
 	createEffect(() => {
 		if(selectedCommand() !== 'angle') return
@@ -71,12 +73,13 @@ const Angle: Solid.Component = () => {
 				onClick={(event: MouseEvent) => elementClicked() ? (elementClicked() as (event: MouseEvent) => void)(event) : undefined}
 				onMouseEnter={(event: MouseEvent) => mouseEnterElement() ? (mouseEnterElement() as (event: MouseEvent) => void)(event) : undefined}
 				onMouseLeave={(event: MouseEvent) => mouseLeaveElement() ? (mouseLeaveElement() as (event: MouseEvent) => void)(event) : undefined}
-			/>
+				/>
 			) as SVGLineElement
 			return [...svgElements]
 		})
 	})
 
+	// Form logic
 	function mouseEnterLineSelection(index: number){
 		const mouseEnterEvent = new MouseEvent('mouseenter', {
 			view: window,
@@ -135,97 +138,89 @@ const Angle: Solid.Component = () => {
 		}, 400)
 	}
 
+	// Button clicked
 	function angleClicked(){
-		if(selectedCommand() == 'angle'){
-			setSelectedCommand(null)
-			setElementClicked(null)
-			setMouseEnterElement(null)
-			setMouseLeaveElement(null)
-		}else{
-			setMouseDown(() => () => {})
-			setMouseMove(() => () => {})
-			setCommandSettings({
-				form: (
-					<form onSubmit={(event) => {event.preventDefault()}} class='text-black w-full h-1/2'>
-						<Select
-							value={commandSettings()?.selectedLineAIndex}
-							placeholder="Select line A..."
-							options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineBIndex?.toString())}
-							itemComponent={props =>
-								<SelectItem
-									onMouseEnter={() => mouseEnterLineSelection(parseInt(props.item.rawValue))}
-									onMouseLeave={() => mouseLeaveLineSelection(parseInt(props.item.rawValue))}
-									onClick={() => clickLineSelection(parseInt(props.item.rawValue), "A")}
-									item={props.item}>
-										{props.item.rawValue}
-								</SelectItem>}
-						>
-							<SelectTrigger>
-								<SelectValue<string>>{() => commandSettings()?.selectedLineAIndex}</SelectValue>
-							</SelectTrigger>
-							<SelectContent />
-						</Select>
+		clearSignals()
+		if(selectedCommand() == 'angle') return
+		setCommandSettings({
+			form: (
+				<form onSubmit={(event) => {event.preventDefault()}} class='text-black w-full h-1/2'>
+					<Select
+						value={commandSettings()?.selectedLineAIndex}
+						placeholder="Select line A..."
+						options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineBIndex?.toString())}
+						itemComponent={props =>
+							<SelectItem
+								onMouseEnter={() => mouseEnterLineSelection(parseInt(props.item.rawValue))}
+								onMouseLeave={() => mouseLeaveLineSelection(parseInt(props.item.rawValue))}
+								onClick={() => clickLineSelection(parseInt(props.item.rawValue), "A")}
+								item={props.item}>
+									{props.item.rawValue}
+							</SelectItem>}
+					>
+						<SelectTrigger>
+							<SelectValue<string>>{() => commandSettings()?.selectedLineAIndex}</SelectValue>
+						</SelectTrigger>
+						<SelectContent />
+					</Select>
 
-						<Select
-							value={commandSettings()?.selectedLineBIndex}
-							placeholder="Select line B..."
-							options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineAIndex?.toString())}
-							itemComponent={props =>
-								<SelectItem
-									onMouseEnter={() => mouseEnterLineSelection(parseInt(props.item.rawValue))}
-									onMouseLeave={() => mouseLeaveLineSelection(parseInt(props.item.rawValue))}
-									onClick={() => clickLineSelection(parseInt(props.item.rawValue), "B")}
-									item={props.item}>
-										{props.item.rawValue}
-								</SelectItem>
-							}
-						>
-							<SelectTrigger>
-								<SelectValue<string>>{() => commandSettings()?.selectedLineBIndex}</SelectValue>
-							</SelectTrigger>
-							<SelectContent />
-						</Select>
+					<Select
+						value={commandSettings()?.selectedLineBIndex}
+						placeholder="Select line B..."
+						options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineAIndex?.toString())}
+						itemComponent={props =>
+							<SelectItem
+								onMouseEnter={() => mouseEnterLineSelection(parseInt(props.item.rawValue))}
+								onMouseLeave={() => mouseLeaveLineSelection(parseInt(props.item.rawValue))}
+								onClick={() => clickLineSelection(parseInt(props.item.rawValue), "B")}
+								item={props.item}>
+									{props.item.rawValue}
+							</SelectItem>
+						}
+					>
+						<SelectTrigger>
+							<SelectValue<string>>{() => commandSettings()?.selectedLineBIndex}</SelectValue>
+						</SelectTrigger>
+						<SelectContent />
+					</Select>
 
-						<label for='angle'>Angle: </label>
-						<input id='angle' type='number' step="any" min={0} max={360} value="90"
-							onInput={(event) => {
-								// commandSettings()?.angle % 1 > 0 ? commandSettings()?.angle : commandSettings()?.angle.toFixed(1)
-									// this allows you to change commandSettings().angle and it updates the angle in the form input.
-								setCommandSettingsProperty("angle", event.target.valueAsNumber)
-							}}
-						class='bg-white border-2 border-black focus:outline-none pl-1 w-3/4'></input>
-					</form> as HTMLFormElement
-				),
-				angle: 90.0,
-				selectedLineAIndex: null,
-				selectedLineBIndex: null
-			})
-			function elementClicked(event: MouseEvent){
-				const elementIndex = getElementIndex(event)
-				if(isSelected(event)){
-					// Unselect the right Line A or Line B
-					unselect(event)
-					if(commandSettings()?.selectedLineAIndex === elementIndex){
-						setCommandSettingsProperty("selectedLineAIndex", null)
-					}else{
-						setCommandSettingsProperty("selectedLineBIndex", null)
-					}
+					<label for='angle'>Angle: </label>
+					<input id='angle' type='number' step="any" min={0} max={360} value="90"
+						onInput={(event) => {
+							// commandSettings()?.angle % 1 > 0 ? commandSettings()?.angle : commandSettings()?.angle.toFixed(1)
+								// this allows you to change commandSettings().angle and it updates the angle in the form input.
+							setCommandSettingsProperty("angle", event.target.valueAsNumber)
+						}}
+					class='bg-white border-2 border-black focus:outline-none pl-1 w-3/4'></input>
+				</form> as HTMLFormElement
+			),
+			selectedLineAIndex: null,
+			selectedLineBIndex: null,
+			angle: 90.0
+		})
+		function elementClicked(event: MouseEvent){
+			const elementIndex = getElementIndex(event)
+			if(isSelected(event)){
+				unselect(event)
+				if(commandSettings()?.selectedLineAIndex === elementIndex){
+					setCommandSettingsProperty("selectedLineAIndex", null)
 				}else{
-					if(commandSettings()?.selectedLineAIndex === null){
-						select(event)
-						setCommandSettingsProperty("selectedLineAIndex", elementIndex)
-					}else if(commandSettings()?.selectedLineBIndex === null){
-						select(event)
-						setCommandSettingsProperty("selectedLineBIndex", elementIndex)
-					}
+					setCommandSettingsProperty("selectedLineBIndex", null)
+				}
+			}else{
+				if(commandSettings()?.selectedLineAIndex === null){
+					select(event)
+					setCommandSettingsProperty("selectedLineAIndex", elementIndex)
+				}else if(commandSettings()?.selectedLineBIndex === null){
+					select(event)
+					setCommandSettingsProperty("selectedLineBIndex", elementIndex)
 				}
 			}
-			setElementClicked(() => elementClicked)
-			setMouseEnterElement(() => previewSelection)
-			setMouseLeaveElement(() => unPreviewSelection)
-			unselectAll()
-			setSelectedCommand('angle')
 		}
+		setElementClicked(() => elementClicked)
+		setMouseEnterElement(() => previewSelection)
+		setMouseLeaveElement(() => unPreviewSelection)
+		setSelectedCommand('angle')
 	}
 
 	return (

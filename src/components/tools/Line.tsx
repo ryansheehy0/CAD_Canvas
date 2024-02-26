@@ -3,6 +3,7 @@ import { selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, svgEle
 import line from "../../assets/tools/line.svg"
 import { twMerge } from 'tailwind-merge'
 import { Button } from "@/components/ui/button"
+import { clearSignals } from '@/elementUtilityFunctions'
 
 const Line: Solid.Component = () => {
 	let isDrawing = false
@@ -42,22 +43,12 @@ const Line: Solid.Component = () => {
 
 	function lineClicked(){
 		if(selectedCommand() === 'line'){
-			setSelectedCommand(null)
-			setMouseDown(null)
-			setMouseMove(null)
-			// Remove element events
-			setElementClicked(null)
-			setMouseEnterElement(null)
-			setMouseLeaveElement(null)
+			clearSignals()
 		}else{
-			setSelectedCommand('line')
-			console.log("set line functions")
+			clearSignals()
 			setMouseDown(() => lineMouseDown)
 			setMouseMove(() => lineMouseMove)
-			// Remove element events
-			setElementClicked(null)
-			setMouseEnterElement(null)
-			setMouseLeaveElement(null)
+			setSelectedCommand('line')
 		}
 	}
 

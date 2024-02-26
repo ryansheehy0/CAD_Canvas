@@ -30,11 +30,12 @@ Maybe focus more on making note taking diagrams rather than making logos/icons.
 - You can never have 2 or more points in the same position. They will be automatically joined.
 - Create animations with constraints
 	- Maybe not include. Feature creep
-- Can have multiple layers and hide and un-hide different layers
+- Can have multiple layers and hide and un-hide different layers(Maybe not include. Is it really necessary?)
 	- Can move components between layers
 	- Maybe not include. Feature creep
 - Supports CMYK colors for print color accuracy
 - Used to make simple logos. Not really advanced features like with inkscape.
+- (Definitely include)variables for different dimensions
 
 ### Drawing tools
 - Line
