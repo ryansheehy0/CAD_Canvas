@@ -117,10 +117,10 @@ const Vertical: Solid.Component = () => {
 			<Button
 				onClick={verticalClicked}
 				class={twMerge(
-					'bg-white border border-black text-black rounded-none w-full h-full p-0 m-0 text-base hover:border-black focus:outline-none',
+					'bg-white border border-black text-black rounded-none w-full h-full p-0 m-0 text-base hover:border-black focus:outline-none hover:bg-neutral-200',
 					selectedCommand() == 'vertical' ? "border-2" : "border",
 					"flex justify-center items-center")}>
-				<img src={vertical} class='w-6 h-6'/>
+				<img src={vertical} class='w-8 h-8'/>
 			</Button>
 		</div>
 	)

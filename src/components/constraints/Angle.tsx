@@ -7,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from ".
 import { Button } from "../../components/ui/button"
 
 const Angle: Solid.Component = () => {
-
 	// Helper functions
 	function tanDegrees(degree: number){
 		return Math.tan(degree * (Math.PI/180))
@@ -163,14 +162,14 @@ const Angle: Solid.Component = () => {
 						<SelectContent />
 					</Select>
 
-					<label for='angle'>Angle: </label>
+					<label for='angle'>Angle:</label>
 					<input id='angle' type='number' step="any" min={0} max={360} value="90"
 						onInput={(event) => {
 							// commandSettings()?.angle % 1 > 0 ? commandSettings()?.angle : commandSettings()?.angle.toFixed(1)
 								// this allows you to change commandSettings().angle and it updates the angle in the form input.
 							setCommandSettingsProperty("angle", event.target.valueAsNumber)
 						}}
-					class='bg-white border-2 border-black focus:outline-none pl-1 w-3/4'></input>
+					class='bg-white border border-black focus:outline-none pl-1 w-full'></input>
 				</form> as HTMLFormElement
 			),
 			selectedLineAIndex: null,
@@ -207,7 +206,7 @@ const Angle: Solid.Component = () => {
 			<Button
 				onClick={angleClicked}
 				class={twMerge(
-					'bg-white border border-black text-black rounded-none w-full h-full p-0 m-0 text-base hover:border-black focus:outline-none',
+					'bg-white border border-black text-black rounded-none w-full h-full p-0 m-0 text-base hover:border-black focus:outline-none hover:bg-neutral-200',
 					selectedCommand() == 'angle' ? "border-2" : "border",
 					"flex justify-center items-center")}>
 				<img src={angle} class='w-6 h-6'/>

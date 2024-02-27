@@ -3,7 +3,7 @@ import { Button } from "../components/ui/button"
 
 const File: Solid.Component = () => {
 	return (
-		<Button variant='ghost' class='flex-1 h-full'>
+		<Button variant='ghost' class='flex-1 h-full hover:bg-white'>
 			File
 		</Button>
 	)
