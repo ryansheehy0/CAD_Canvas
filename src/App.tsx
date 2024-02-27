@@ -2,7 +2,7 @@ import CommandSideBar from "./components/CommandSideBar"
 import UtilitySideBar from "./components/UtilitySideBar"
 import { createSignal } from "solid-js"
 
-export const [selectedCommand, setSelectedCommand] = createSignal<"line" | "angle" | "horizontal" | null>(null)
+export const [selectedCommand, setSelectedCommand] = createSignal<"line" | "angle" | "horizontal" | "vertical" | null>(null)
 export type SVGElements = SVGLineElement
 export const [svgElements, setSVGElements] = createSignal<SVGElements[]>([])
 // Command changing signals

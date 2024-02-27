@@ -3,7 +3,7 @@ import File from "./File"
 import Settings from './Settings'
 import Tools from "./Tools"
 import Constraints from './Constraints'
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "../components/ui/separator"
 
 const CommandSideBar: Solid.Component = () => {
 	return (

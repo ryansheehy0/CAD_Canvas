@@ -1,9 +1,9 @@
 import Solid from 'solid-js'
-import { selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, svgElements, setSVGElements, setElementClicked, elementClicked, setMouseEnterElement, setMouseLeaveElement, mouseEnterElement, mouseLeaveElement } from '../../App'
+import { selectedCommand, setSelectedCommand, setMouseDown, setMouseMove, svgElements, setSVGElements, elementClicked, mouseEnterElement, mouseLeaveElement } from '../../App'
 import line from "../../assets/tools/line.svg"
 import { twMerge } from 'tailwind-merge'
-import { Button } from "@/components/ui/button"
-import { clearSignals } from '@/elementUtilityFunctions'
+import { Button } from "../../components/ui/button"
+import { clearSignals } from '../../utilityFunctions'
 
 const Line: Solid.Component = () => {
 	let isDrawing = false
@@ -42,14 +42,11 @@ const Line: Solid.Component = () => {
 	}
 
 	function lineClicked(){
-		if(selectedCommand() === 'line'){
-			clearSignals()
-		}else{
-			clearSignals()
-			setMouseDown(() => lineMouseDown)
-			setMouseMove(() => lineMouseMove)
-			setSelectedCommand('line')
-		}
+		if(selectedCommand() === 'line') return clearSignals()
+		clearSignals()
+		setMouseDown(() => lineMouseDown)
+		setMouseMove(() => lineMouseMove)
+		setSelectedCommand('line')
 	}
 
 	return (

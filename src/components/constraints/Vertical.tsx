@@ -1,16 +1,16 @@
 import Solid, { createEffect } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
-import horizontal from "../../assets/constraints/horizontal.svg"
+import vertical from '../../assets/constraints/vertical.svg'
 import { Button } from '../../components/ui/button'
 import { selectedCommand, setSelectedCommand, setMouseEnterElement, setMouseLeaveElement, setCommandSettings, commandSettings, svgElements, setElementClicked, setSVGElements, elementClicked, mouseEnterElement, mouseLeaveElement } from '../../App'
 import { clearSignals, previewSelection, unPreviewSelection, select, unselect, setCommandSettingsProperty, getElementIndex, isSelected } from '../../utilityFunctions'
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../../components/ui/select'
 
-const Horizontal: Solid.Component = () => {
+const Vertical: Solid.Component = () => {
 	// Constraint Logic
 	let previousLineIndex: number
 	createEffect(() => {
-		if(selectedCommand() !== 'horizontal') return
+		if(selectedCommand() !== 'vertical') return
 		const lineIndex = commandSettings()?.selectedLineIndex
 		if(lineIndex === null || lineIndex === previousLineIndex) return
 		previousLineIndex = lineIndex
@@ -20,12 +20,13 @@ const Horizontal: Solid.Component = () => {
 			const x2 = line.x2.baseVal.value
 			const y2 = line.y2.baseVal.value
 		const distance = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-		const newY2 = y1
-		let newX2: number
-		if(x1 < x2){
-			newX2 = x1 + distance
+
+		const newX2 = x1
+		let newY2: number
+		if(y1 < y2){
+			newY2 = y1 + distance
 		}else{
-			newX2 = x1 - distance
+			newY2 = y1 - distance
 		}
 		setSVGElements((svgElements) => {
 			svgElements[lineIndex] = (
@@ -63,8 +64,8 @@ const Horizontal: Solid.Component = () => {
 	}
 
 	// Button clicked
-	function horizontalClicked(){
-		if(selectedCommand() === 'horizontal') return clearSignals()
+	function verticalClicked(){
+		if(selectedCommand() === 'vertical') return clearSignals()
 		clearSignals()
 		setCommandSettings({
 			form: (
@@ -107,19 +108,19 @@ const Horizontal: Solid.Component = () => {
 		setElementClicked(() => elementClicked)
 		setMouseEnterElement(() => previewSelection)
 		setMouseLeaveElement(() => unPreviewSelection)
-		setSelectedCommand('horizontal')
+		setSelectedCommand('vertical')
 	}
 
 	return (
 		<Button
-			onClick={horizontalClicked}
+			onClick={verticalClicked}
 			class={twMerge(
 				'bg-white border border-black text-black rounded-none w-8 h-8 p-0 m-0 text-base hover:border-black focus:outline-none',
-				selectedCommand() == 'horizontal' ? "border-2" : "border",
+				selectedCommand() == 'vertical' ? "border-2" : "border",
 				"flex justify-center items-center")}>
-			<img src={horizontal} class='w-6 h-6'/>
+			<img src={vertical} class='w-6 h-6'/>
 		</Button>
 	)
 }
 
-export default Horizontal
+export default Vertical

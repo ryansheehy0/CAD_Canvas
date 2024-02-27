@@ -1,10 +1,10 @@
 import Solid, { createEffect } from 'solid-js'
 import { twMerge } from 'tailwind-merge'
 import angle from '../../assets/constraints/angle.svg'
-import { selectedCommand, setSelectedCommand, commandSettings, setCommandSettings, svgElements, setSVGElements, setMouseDown, setMouseMove, elementClicked, setElementClicked, mouseEnterElement, setMouseEnterElement, mouseLeaveElement, setMouseLeaveElement } from '../../App'
-import { select, unselect, previewSelection, unPreviewSelection, isSelected, getElementIndex, setCommandSettingsProperty, unselectAll, clearSignals } from '../../elementUtilityFunctions'
-import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
+import { selectedCommand, setSelectedCommand, commandSettings, setCommandSettings, svgElements, setSVGElements, elementClicked, setElementClicked, mouseEnterElement, setMouseEnterElement, mouseLeaveElement, setMouseLeaveElement } from '../../App'
+import { select, unselect, previewSelection, unPreviewSelection, isSelected, getElementIndex, setCommandSettingsProperty, clearSignals } from '../../utilityFunctions'
+import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "../../components/ui/select"
+import { Button } from "../../components/ui/button"
 
 const Angle: Solid.Component = () => {
 
@@ -80,24 +80,6 @@ const Angle: Solid.Component = () => {
 	})
 
 	// Form logic
-	function mouseEnterLineSelection(index: number){
-		const mouseEnterEvent = new MouseEvent('mouseenter', {
-			view: window,
-			bubbles: true,
-			cancelable: false
-		})
-		svgElements()[index].dispatchEvent(mouseEnterEvent)
-	}
-
-	function mouseLeaveLineSelection(index: number){
-		const mouseLeaveEvent = new MouseEvent('mouseleave', {
-			view: window,
-			bubbles: true,
-			cancelable: false
-		})
-		svgElements()[index].dispatchEvent(mouseLeaveEvent)
-	}
-
 	function clickLineSelection(index: number, lineAOrB: "A" | "B"){
 		if(lineAOrB === "A"){
 			if(commandSettings()?.selectedLineAIndex === null){
@@ -127,21 +109,16 @@ const Angle: Solid.Component = () => {
 
 		setTimeout(() => {
 			// This delay is there to clear any mouse enter events that fire after the click
-			for(const svgElement of svgElements()){
-				const mouseLeaveEvent = new MouseEvent('mouseleave', {
-					view: window,
-					bubbles: true,
-					cancelable: false
-				})
-				svgElement.dispatchEvent(mouseLeaveEvent)
+			for(let i = 0; i < svgElements().length; i++){
+				unPreviewSelection(i)
 			}
 		}, 400)
 	}
 
 	// Button clicked
 	function angleClicked(){
+		if(selectedCommand() == 'angle') return clearSignals()
 		clearSignals()
-		if(selectedCommand() == 'angle') return
 		setCommandSettings({
 			form: (
 				<form onSubmit={(event) => {event.preventDefault()}} class='text-black w-full h-1/2'>
@@ -151,8 +128,8 @@ const Angle: Solid.Component = () => {
 						options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineBIndex?.toString())}
 						itemComponent={props =>
 							<SelectItem
-								onMouseEnter={() => mouseEnterLineSelection(parseInt(props.item.rawValue))}
-								onMouseLeave={() => mouseLeaveLineSelection(parseInt(props.item.rawValue))}
+								onMouseEnter={() => previewSelection(parseInt(props.item.rawValue))}
+								onMouseLeave={() => unPreviewSelection(parseInt(props.item.rawValue))}
 								onClick={() => clickLineSelection(parseInt(props.item.rawValue), "A")}
 								item={props.item}>
 									{props.item.rawValue}
@@ -170,8 +147,8 @@ const Angle: Solid.Component = () => {
 						options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineAIndex?.toString())}
 						itemComponent={props =>
 							<SelectItem
-								onMouseEnter={() => mouseEnterLineSelection(parseInt(props.item.rawValue))}
-								onMouseLeave={() => mouseLeaveLineSelection(parseInt(props.item.rawValue))}
+								onMouseEnter={() => previewSelection(parseInt(props.item.rawValue))}
+								onMouseLeave={() => unPreviewSelection(parseInt(props.item.rawValue))}
 								onClick={() => clickLineSelection(parseInt(props.item.rawValue), "B")}
 								item={props.item}>
 									{props.item.rawValue}
