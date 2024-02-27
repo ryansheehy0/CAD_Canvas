@@ -6,10 +6,12 @@ import Vertical from './constraints/Vertical'
 const Constraints: Solid.Component = () => {
 
 	return (
-		<div class='w-full h-52 p-1 my-1 grid grid-cols-6'>
-			<Angle />
-			<Horizontal />
-			<Vertical />
+		<div class='w-full aspect-square pr-1 pb-1'>
+			<div class='w-full h-full grid grid-cols-6 grid-rows-6 gap-0'>
+				<Angle />
+				<Horizontal />
+				<Vertical />
+			</div>
 		</div>
 	)
 }

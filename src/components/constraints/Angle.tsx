@@ -126,6 +126,7 @@ const Angle: Solid.Component = () => {
 						value={commandSettings()?.selectedLineAIndex}
 						placeholder="Select line A..."
 						options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineBIndex?.toString())}
+						class='bg-white border border-black mb-2'
 						itemComponent={props =>
 							<SelectItem
 								onMouseEnter={() => previewSelection(parseInt(props.item.rawValue))}
@@ -145,6 +146,7 @@ const Angle: Solid.Component = () => {
 						value={commandSettings()?.selectedLineBIndex}
 						placeholder="Select line B..."
 						options={svgElements().map((_svgElement, index) => `${index}`).filter((svgElementIndex) => svgElementIndex !== commandSettings()?.selectedLineAIndex?.toString())}
+						class='bg-white border border-black mb-2'
 						itemComponent={props =>
 							<SelectItem
 								onMouseEnter={() => previewSelection(parseInt(props.item.rawValue))}
@@ -201,14 +203,16 @@ const Angle: Solid.Component = () => {
 	}
 
 	return (
-		<Button
-			onClick={angleClicked}
-			class={twMerge(
-				'bg-white border border-black text-black rounded-none w-8 h-8 p-0 m-0 text-base hover:border-black focus:outline-none',
-				selectedCommand() == 'angle' ? "border-2" : "border",
-				"flex justify-center items-center")}>
-			<img src={angle} class='w-6 h-6'/>
-		</Button>
+		<div class='w-full aspect-square pt-1 pl-1'>
+			<Button
+				onClick={angleClicked}
+				class={twMerge(
+					'bg-white border border-black text-black rounded-none w-full h-full p-0 m-0 text-base hover:border-black focus:outline-none',
+					selectedCommand() == 'angle' ? "border-2" : "border",
+					"flex justify-center items-center")}>
+				<img src={angle} class='w-6 h-6'/>
+			</Button>
+		</div>
 	)
 }
 
