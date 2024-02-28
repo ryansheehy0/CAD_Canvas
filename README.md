@@ -1,3 +1,5 @@
+CAD Canvas is licensed under GPLv3. See the COPYING file for details.
+
 # CAD Canvas
 
 A 2d CAD software for note taking, creating diagrams, and making logos.
